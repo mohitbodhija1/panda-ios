@@ -13,6 +13,7 @@ struct HomeHeroCard: View {
     let youAreOwed: Decimal
     let owedGroups: Int
     let owedFrom: Int
+    let currencyCode: String
 
     var body: some View {
         VStack(spacing: 0) {
@@ -34,7 +35,7 @@ struct HomeHeroCard: View {
                         .frame(width: 96, height: 96)
                         .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
 
-                    Image(systemName: "cup.and.saucer.fill")
+                    Image(systemName: CurrencyGlyph.sfSymbolName(for: currencyCode))
                         .font(.system(size: 14, weight: .bold))
                         .foregroundStyle(.white)
                         .padding(8)
@@ -52,7 +53,8 @@ struct HomeHeroCard: View {
                 youOwe: youOwe,
                 youAreOwed: youAreOwed,
                 owedGroups: owedGroups,
-                owedFrom: owedFrom
+                owedFrom: owedFrom,
+                currencyCode: currencyCode
             )
             .padding(.horizontal, 16)
             .offset(y: 30)
@@ -72,7 +74,8 @@ struct HomeHeroCard: View {
         youOwe: 156.50,
         youAreOwed: 89.20,
         owedGroups: 3,
-        owedFrom: 2
+        owedFrom: 2,
+        currencyCode: "USD"
     )
     .padding()
     .background(AppColor.bgTop)

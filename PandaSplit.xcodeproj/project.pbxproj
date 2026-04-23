@@ -17,12 +17,6 @@
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5FE455D02F9A775700BDA1F0 /* AppSource */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
-			explicitFileTypes = {
-			};
-			explicitFolders = (
-			);
 			path = AppSource;
 			sourceTree = "<group>";
 		};
@@ -97,7 +91,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 5F7965D52F9911820063F37A /* Build configuration list for PBXProject "PandaSplit - Bill Splitter & Group Expense Tracker" */;
+			buildConfigurationList = 5F7965D52F9911820063F37A /* Build configuration list for PBXProject "PandaSplit" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -334,7 +328,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		5F7965D52F9911820063F37A /* Build configuration list for PBXProject "PandaSplit - Bill Splitter & Group Expense Tracker" */ = {
+		5F7965D52F9911820063F37A /* Build configuration list for PBXProject "PandaSplit" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				5F7965E32F9911840063F37A /* Debug */,

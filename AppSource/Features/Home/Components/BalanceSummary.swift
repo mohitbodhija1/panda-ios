@@ -12,12 +12,13 @@ struct BalanceSummary: View {
     let youAreOwed: Decimal
     let owedGroups: Int
     let owedFrom: Int
+    let currencyCode: String
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             column(
                 label: "You owe",
-                amount: youOwe.currencyString,
+                amount: youOwe.currencyString(code: currencyCode),
                 subtitle: "across \(owedGroups) groups"
             )
 
@@ -27,7 +28,7 @@ struct BalanceSummary: View {
 
             column(
                 label: "You are owed",
-                amount: youAreOwed.currencyString,
+                amount: youAreOwed.currencyString(code: currencyCode),
                 subtitle: "from \(owedFrom) friends"
             )
         }
@@ -75,7 +76,7 @@ struct BalanceSummary: View {
 }
 
 #Preview {
-    BalanceSummary(youOwe: 156.50, youAreOwed: 89.20, owedGroups: 3, owedFrom: 2)
+    BalanceSummary(youOwe: 156.50, youAreOwed: 89.20, owedGroups: 3, owedFrom: 2, currencyCode: "USD")
         .padding()
         .background(AppColor.bgTop)
 }

@@ -22,7 +22,13 @@ struct AuthTextField: View {
                 .foregroundStyle(AppColor.textSecondary)
                 .frame(width: 20)
 
-            TextField(placeholder, text: $text)
+            TextField(
+                "",
+                text: $text,
+                prompt: Text(placeholder)
+                    .font(AppFont.bodyRegular)
+                    .foregroundStyle(Color.black)
+            )
                 .font(AppFont.bodyRegular)
                 .foregroundStyle(AppColor.textPrimary)
                 .keyboardType(keyboard)

@@ -23,7 +23,8 @@ struct HomeView: View {
                         youOwe: vm.youOwe,
                         youAreOwed: vm.youAreOwed,
                         owedGroups: vm.owedGroupsCount,
-                        owedFrom: vm.owedFromCount
+                        owedFrom: vm.owedFromCount,
+                        currencyCode: vm.landingCurrency
                     )
 
                     VStack(spacing: 10) {

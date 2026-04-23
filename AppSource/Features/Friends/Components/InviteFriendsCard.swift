@@ -6,6 +6,13 @@
 import SwiftUI
 
 struct InviteFriendsCard: View {
+    private static var shareMessage: String {
+        let name = (Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
+            ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String)
+            ?? "PandaSplit"
+        return "Let's split expenses on \(name). Download the app and we can track shared costs together."
+    }
+
     var body: some View {
         HStack(spacing: 14) {
             ZStack {
@@ -28,12 +35,19 @@ struct InviteFriendsCard: View {
 
             Spacer()
 
-            Text("Share")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(AppColor.pandaBlue)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(Capsule().fill(AppColor.chipBlue))
+            ShareLink(
+                item: Self.shareMessage,
+                subject: Text("Join me on PandaSplit"),
+                message: Text(Self.shareMessage)
+            ) {
+                Text("Share")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppColor.pandaBlue)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
+                    .background(Capsule().fill(AppColor.chipBlue))
+            }
+            .buttonStyle(.plain)
         }
         .padding(16)
         .background(

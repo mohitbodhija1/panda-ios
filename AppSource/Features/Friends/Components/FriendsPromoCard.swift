@@ -27,14 +27,17 @@ struct FriendsPromoCard: View {
 
             Spacer()
 
-            Circle()
-                .fill(AppColor.pandaBlue)
-                .frame(width: 36, height: 36)
-                .overlay(
-                    Image(systemName: "plus")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(.white)
-                )
+            NavigationLink(value: FriendsRoute.addFriend) {
+                Circle()
+                    .fill(AppColor.pandaBlue)
+                    .frame(width: 36, height: 36)
+                    .overlay(
+                        Image(systemName: "plus")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(.white)
+                    )
+            }
+            .buttonStyle(.plain)
         }
         .padding(16)
         .background(

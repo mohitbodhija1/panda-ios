@@ -15,6 +15,8 @@ import Observation
 @MainActor
 final class HomeViewModel {
     var firstName: String = ""
+    /// Profile default; used on the Home landing card for icon + balance formatting.
+    var landingCurrency: String = UserPreferences.fallbackCurrency
     var youOwe: Decimal = 0
     var youAreOwed: Decimal = 0
     var owedGroupsCount: Int = 0
@@ -53,7 +55,9 @@ final class HomeViewModel {
                 ?? p.username
                 ?? "there"
 
-            UserPreferences.defaultCurrency = p.defaultCurrency
+            let profileCurrency = p.defaultCurrency.uppercased()
+            UserPreferences.defaultCurrency = profileCurrency
+            landingCurrency = profileCurrency
 
             youOwe = s?.youOwe ?? 0
             youAreOwed = s?.youAreOwed ?? 0

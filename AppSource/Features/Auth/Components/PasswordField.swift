@@ -14,6 +14,12 @@ struct PasswordField: View {
 
     @State private var isRevealed: Bool = false
 
+    private var prompt: Text {
+        Text(placeholder)
+            .font(AppFont.bodyRegular)
+            .foregroundStyle(Color.black)
+    }
+
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "lock.fill")
@@ -23,9 +29,9 @@ struct PasswordField: View {
 
             Group {
                 if isRevealed {
-                    TextField(placeholder, text: $text)
+                    TextField("", text: $text, prompt: prompt)
                 } else {
-                    SecureField(placeholder, text: $text)
+                    SecureField("", text: $text, prompt: prompt)
                 }
             }
             .font(AppFont.bodyRegular)
