@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Features/Groups/GroupDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld members",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 108
+        }
+      }
+    ]
+  },
+  "version": 1
+}

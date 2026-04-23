@@ -1,0 +1,23 @@
+{
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/Keychain.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Keychain.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Keychain.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Keychain.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Keychain.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Keychain.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/PKCE.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/PKCE.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/PKCE.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/PKCE.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/PKCE.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/PKCE.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/SessionManager.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/SessionManager.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/SessionManager.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/SessionManager.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/SessionManager.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/SessionManager.swiftdeps"
+  }
+}

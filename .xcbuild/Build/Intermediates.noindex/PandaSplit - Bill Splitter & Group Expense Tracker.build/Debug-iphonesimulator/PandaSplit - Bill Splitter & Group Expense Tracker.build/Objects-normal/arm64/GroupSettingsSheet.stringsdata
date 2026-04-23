@@ -1,0 +1,24 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Features/Groups/GroupSettingsSheet.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Group Settings",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "Developer",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 36
+        }
+      }
+    ]
+  },
+  "version": 1
+}

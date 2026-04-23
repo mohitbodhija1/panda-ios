@@ -1,0 +1,1 @@
+@rpath/PandaSplit - Bill Splitter & Group Expense Tracker.debug.dylib
