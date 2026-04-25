@@ -35,7 +35,7 @@ struct ActivityRow: View {
             VStack(alignment: .trailing, spacing: 2) {
                 Text(trailingAmountText)
                     .font(AppFont.amountSmall)
-                    .foregroundStyle(activity.delta == 0 ? AppColor.textSecondary : (activity.delta >= 0 ? AppColor.positive : AppColor.negative))
+                    .foregroundStyle(amountColor)
                 Text(activity.dateLabel)
                     .font(.system(size: 11))
                     .foregroundStyle(AppColor.textSecondary)
@@ -58,7 +58,18 @@ struct ActivityRow: View {
     }
 
     private var trailingAmountText: String {
-        if activity.delta == 0 { return "—" }
-        return activity.delta.signedCurrencyString(code: activity.currency)
+        if activity.delta != 0 {
+            return activity.delta.signedCurrencyString(code: activity.currency)
+        }
+        if activity.amount > 0 {
+            return activity.amount.currencyString(code: activity.currency)
+        }
+        return "—"
+    }
+
+    private var amountColor: Color {
+        if activity.delta > 0 { return AppColor.positive }
+        if activity.delta < 0 { return AppColor.negative }
+        return AppColor.textPrimary
     }
 }

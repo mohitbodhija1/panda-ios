@@ -27,6 +27,11 @@ final class HomeViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
 
+    /// Lookup maps used by the view to resolve activity tap targets without
+    /// re-fetching anything.
+    private(set) var groupsById: [UUID: GroupRowItem] = [:]
+    private(set) var friendsById: [UUID: FriendRowItem] = [:]
+
     private let profiles = ProfilesService.shared
     private let groupsService = GroupsService.shared
     private let friendsService = FriendsService.shared
@@ -46,9 +51,10 @@ final class HomeViewModel {
             async let members = groupsService.myGroupMemberships()
             async let activity = activityService.recent(limit: 10)
             async let friendBalances = friendsService.balances()
+            async let friendsWithBalances = friendsService.friendsWithBalances(status: .accepted)
 
-            let (p, s, gs, gbs, mems, acts, fbs) = try await (
-                profile, summary, groupsList, groupBalances, members, activity, friendBalances
+            let (p, s, gs, gbs, mems, acts, fbs, fwbs) = try await (
+                profile, summary, groupsList, groupBalances, members, activity, friendBalances, friendsWithBalances
             )
 
             firstName = p.fullName?.components(separatedBy: " ").first
@@ -63,7 +69,8 @@ final class HomeViewModel {
             youAreOwed = s?.youAreOwed ?? 0
 
             owedGroupsCount = gbs.filter { $0.balance != 0 }.count
-            if let me = await SupabaseProvider.currentUserId() {
+            let me = await SupabaseProvider.currentUserId()
+            if let me {
                 owedFromCount = fbs.filter { $0.balance(for: me) > 0 }.count
             }
 
@@ -84,34 +91,30 @@ final class HomeViewModel {
                 )
             }
 
-            recentActivity = acts.map(makeActivityItem)
+            groupsById = Dictionary(uniqueKeysWithValues: groups.map { ($0.id, $0) })
+
+            friendsById = Dictionary(uniqueKeysWithValues: fwbs.map { (fb: FriendWithBalance) in
+                (fb.profile.id, FriendRowItem(
+                    id: fb.profile.id,
+                    name: fb.profile.displayName,
+                    avatarTint: AppColor.tint(for: fb.profile.id),
+                    balance: fb.netOwed,
+                    currency: fb.profile.defaultCurrency,
+                    isPending: fb.isPending
+                ))
+            })
+
+            let friendsByIdForBuilder = Dictionary(uniqueKeysWithValues: fwbs.map { ($0.profile.id, $0) })
+            let groupsByIdForBuilder = Dictionary(uniqueKeysWithValues: gs.map { ($0.id, $0) })
+            let context = ActivityItemBuilder.Context(
+                me: me,
+                friendsById: friendsByIdForBuilder,
+                groupsById: groupsByIdForBuilder,
+                fallbackCurrency: profileCurrency
+            )
+            recentActivity = acts.map { ActivityItemBuilder.make($0, in: context) }
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
         }
-    }
-
-    private func makeActivityItem(_ a: ActivityDTO) -> ActivityItem {
-        let title: String
-        let subtitle: String
-        switch a.kind {
-        case .expenseCreated:    title = "New expense"; subtitle = "Added to a group"
-        case .expenseUpdated:    title = "Expense updated"; subtitle = "Details changed"
-        case .expenseDeleted:    title = "Expense removed"; subtitle = "Deleted from group"
-        case .settlementCreated: title = "Settlement"; subtitle = "Someone settled up"
-        case .groupCreated:      title = "New group"; subtitle = "You were added"
-        case .memberAdded:       title = "Member added"; subtitle = "Group changed"
-        case .memberRemoved:     title = "Member removed"; subtitle = "Group changed"
-        case .friendshipAccepted:title = "New friend"; subtitle = "You're now connected"
-        case .commentAdded:      title = "Comment"; subtitle = "New message on an expense"
-        }
-        return ActivityItem(
-            id: a.id,
-            title: title,
-            subtitle: subtitle,
-            delta: 0,
-            currency: a.currencyDisplayCode(fallback: UserPreferences.defaultCurrency),
-            dateLabel: RelativeDateFormatters.short(from: a.createdAt),
-            avatarTint: AppColor.tint(for: a.actorId)
-        )
     }
 }

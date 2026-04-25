@@ -7,7 +7,6 @@ import SwiftUI
 
 enum GroupSegment: String, CaseIterable, Hashable {
     case expenses = "Expenses"
-    case balances = "Balances"
     case members  = "Members"
 }
 

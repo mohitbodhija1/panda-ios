@@ -27,6 +27,7 @@ struct ActivityDTO: Codable, Identifiable, Hashable {
     let groupId: UUID?
     let expenseId: UUID?
     let settlementId: UUID?
+    let counterpartyId: UUID?
     let payload: [String: AnyCodable]?
     let createdAt: Date
 
@@ -37,6 +38,7 @@ struct ActivityDTO: Codable, Identifiable, Hashable {
         case groupId = "group_id"
         case expenseId = "expense_id"
         case settlementId = "settlement_id"
+        case counterpartyId = "counterparty_id"
         case createdAt = "created_at"
     }
 }
@@ -166,6 +168,26 @@ extension AnyCodable {
         default: return nil
         }
     }
+
+    /// Decimal amount from JSON whether it arrived as String, Int, or Double.
+    /// Postgres `numeric` is serialised as a JSON string by PostgREST, so we
+    /// prefer the string path to preserve precision.
+    var amountFromJSON: Decimal? {
+        switch value {
+        case let s as String:
+            let trimmed = s.trimmingCharacters(in: .whitespacesAndNewlines)
+            return trimmed.isEmpty ? nil : Decimal(string: trimmed)
+        case let i as Int:    return Decimal(i)
+        case let d as Double: return Decimal(d)
+        default: return nil
+        }
+    }
+
+    /// UUID-ish JSON values (PostgREST stores UUIDs as JSON strings).
+    var uuidFromJSON: UUID? {
+        guard let s = stringFromJSON else { return nil }
+        return UUID(uuidString: s)
+    }
 }
 
 extension ActivityDTO {
@@ -176,5 +198,27 @@ extension ActivityDTO {
               !raw.isEmpty
         else { return fallback.uppercased() }
         return raw.uppercased()
+    }
+
+    /// Title from the `title` payload key (set by `rpc_create_expense`).
+    func payloadTitle() -> String? {
+        guard let raw = payload?["title"]?.stringFromJSON else { return nil }
+        let trimmed = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+        return trimmed.isEmpty ? nil : trimmed
+    }
+
+    /// Absolute amount from the `amount` payload key. Falls back when missing.
+    func payloadAmount(fallback: Decimal = 0) -> Decimal {
+        payload?["amount"]?.amountFromJSON ?? fallback
+    }
+
+    /// Settlement payer (UUID) from payload, written by `rpc_settle_up`.
+    func payloadPayer() -> UUID? {
+        payload?["payer"]?.uuidFromJSON
+    }
+
+    /// Settlement payee (UUID) from payload, written by `rpc_settle_up`.
+    func payloadPayee() -> UUID? {
+        payload?["payee"]?.uuidFromJSON
     }
 }

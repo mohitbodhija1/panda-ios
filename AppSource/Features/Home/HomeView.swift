@@ -10,6 +10,9 @@ struct HomeView: View {
     @State private var showPaywall: Bool = false
     @State private var showSettings: Bool = false
     @State private var showNotifications: Bool = false
+    /// Active activity-row destination; presented as a full-screen cover so we
+    /// don't depend on a NavigationStack (Home doesn't have one).
+    @State private var activityDestination: ActivityDestination?
 
     var body: some View {
         ZStack {
@@ -35,7 +38,17 @@ struct HomeView: View {
                         } else if vm.recentActivity.isEmpty {
                             emptyCard("No activity yet. Create a group or add an expense to get started.")
                         } else {
-                            ForEach(vm.recentActivity) { ActivityRow(activity: $0) }
+                            ForEach(vm.recentActivity) { item in
+                                Button {
+                                    if let dest = destination(for: item) {
+                                        activityDestination = dest
+                                    }
+                                } label: {
+                                    ActivityRow(activity: item)
+                                }
+                                .buttonStyle(.plain)
+                                .disabled(destination(for: item) == nil)
+                            }
                         }
                     }
 
@@ -75,6 +88,31 @@ struct HomeView: View {
         .sheet(isPresented: $showNotifications) {
             NotificationsSheetView()
         }
+        .fullScreenCover(item: $activityDestination, onDismiss: {
+            Task { await vm.load() }
+        }) { destination in
+            NavigationStack {
+                switch destination {
+                case .group(let group):
+                    GroupDetailView(group: group)
+                case .friend(let friend):
+                    FriendHistoryView(friend: friend)
+                }
+            }
+        }
+    }
+
+    /// Resolve where an activity row should navigate. Group rows take priority
+    /// (they're more specific); fall back to friend rows for 1-1 expenses,
+    /// settlements, and friendship-accepted activity.
+    private func destination(for item: ActivityItem) -> ActivityDestination? {
+        if let groupId = item.groupId, let group = vm.groupsById[groupId] {
+            return .group(group)
+        }
+        if let friendId = item.friendId, let friend = vm.friendsById[friendId] {
+            return .friend(friend)
+        }
+        return nil
     }
 
     private var topBar: some View {

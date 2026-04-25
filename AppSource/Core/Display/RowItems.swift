@@ -54,9 +54,39 @@ struct ActivityItem: Identifiable, Hashable {
     let subtitle: String
     /// Positive → you got paid / are owed, negative → you owe.
     let delta: Decimal
+    /// Absolute amount to render in the trailing label. `0` means "no amount".
+    let amount: Decimal
     let currency: String
     let dateLabel: String
     let avatarTint: Color
+    /// When set, tapping the row navigates to the group's detail.
+    let groupId: UUID?
+    /// When set, tapping the row navigates to the friend's history.
+    let friendId: UUID?
+
+    init(
+        id: UUID,
+        title: String,
+        subtitle: String,
+        delta: Decimal,
+        amount: Decimal = 0,
+        currency: String,
+        dateLabel: String,
+        avatarTint: Color,
+        groupId: UUID? = nil,
+        friendId: UUID? = nil
+    ) {
+        self.id = id
+        self.title = title
+        self.subtitle = subtitle
+        self.delta = delta
+        self.amount = amount
+        self.currency = currency
+        self.dateLabel = dateLabel
+        self.avatarTint = avatarTint
+        self.groupId = groupId
+        self.friendId = friendId
+    }
 }
 
 /// Lightweight formatters used by view models that assemble display items.

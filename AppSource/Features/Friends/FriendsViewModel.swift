@@ -27,6 +27,10 @@ final class FriendsViewModel {
     /// the row to disable buttons and avoid double-taps.
     var pendingActionIds: Set<UUID> = []
 
+    /// Out-of-band invite ids currently being cancelled. Mirrors
+    /// `pendingActionIds` and disables the Cancel button on `PendingInviteRow`.
+    var pendingInviteCancelIds: Set<UUID> = []
+
     private let service = FriendsService.shared
 
     var filtered: [FriendRowItem] {
@@ -122,6 +126,19 @@ final class FriendsViewModel {
             promoted.isPending = false
             friends.append(promoted)
             await load()
+        } catch {
+            errorMessage = AppError.wrap(error).errorDescription
+        }
+    }
+
+    func cancelInvite(_ invite: PendingInviteRowItem) async {
+        guard !pendingInviteCancelIds.contains(invite.id) else { return }
+        pendingInviteCancelIds.insert(invite.id)
+        defer { pendingInviteCancelIds.remove(invite.id) }
+
+        do {
+            try await service.cancelInvite(invite.id)
+            pendingInvites.removeAll { $0.id == invite.id }
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
         }

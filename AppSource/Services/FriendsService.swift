@@ -152,6 +152,16 @@ final class FriendsService {
             .value
     }
 
+    /// Withdraw an out-of-band invite (email/phone) the current user sent
+    /// before the recipient signed up. The `friend_invites_owner_all` RLS
+    /// policy already allows the inviter to delete their own pending row.
+    func cancelInvite(_ id: UUID) async throws {
+        try await db.from("friend_invites")
+            .delete()
+            .eq("id", value: id)
+            .execute()
+    }
+
     /// Reject a pending friend request from `otherUserId`. Implemented as a
     /// direct delete because the `friendships_pair_delete` RLS policy already
     /// allows either party in the pair to drop the row.

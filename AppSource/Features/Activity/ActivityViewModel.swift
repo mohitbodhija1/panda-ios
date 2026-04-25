@@ -13,7 +13,14 @@ final class ActivityViewModel {
     var isLoading: Bool = false
     var errorMessage: String?
 
-    private let service = ActivityService.shared
+    /// Lookup maps used by the view to resolve activity tap targets without
+    /// re-fetching anything (mirrors HomeViewModel).
+    private(set) var groupsById: [UUID: GroupRowItem] = [:]
+    private(set) var friendsById: [UUID: FriendRowItem] = [:]
+
+    private let activityService = ActivityService.shared
+    private let groupsService = GroupsService.shared
+    private let friendsService = FriendsService.shared
 
     func load() async {
         isLoading = true
@@ -21,37 +28,49 @@ final class ActivityViewModel {
         defer { isLoading = false }
 
         do {
-            let rows = try await service.recent(limit: 100)
-            feed = rows.map(mapRow)
+            async let rows = activityService.recent(limit: 100)
+            async let gs = groupsService.myGroups()
+            async let memberships = groupsService.myGroupMemberships()
+            async let fwbs = friendsService.friendsWithBalances(status: .accepted)
+
+            let (acts, gsList, mems, friendsList) = try await (rows, gs, memberships, fwbs)
+            let me = await SupabaseProvider.currentUserId()
+
+            let memberCountByGroup = Dictionary(grouping: mems, by: { $0.groupId })
+                .mapValues(\.count)
+
+            groupsById = Dictionary(uniqueKeysWithValues: gsList.map {
+                ($0.id, GroupRowItem(
+                    id: $0.id,
+                    name: $0.name,
+                    memberCount: memberCountByGroup[$0.id] ?? 0,
+                    yourBalance: 0,
+                    currency: $0.defaultCurrency
+                ))
+            })
+
+            friendsById = Dictionary(uniqueKeysWithValues: friendsList.map { (fb: FriendWithBalance) in
+                (fb.profile.id, FriendRowItem(
+                    id: fb.profile.id,
+                    name: fb.profile.displayName,
+                    avatarTint: AppColor.tint(for: fb.profile.id),
+                    balance: fb.netOwed,
+                    currency: fb.profile.defaultCurrency,
+                    isPending: fb.isPending
+                ))
+            })
+
+            let friendsByIdForBuilder = Dictionary(uniqueKeysWithValues: friendsList.map { ($0.profile.id, $0) })
+            let groupsByIdForBuilder = Dictionary(uniqueKeysWithValues: gsList.map { ($0.id, $0) })
+            let context = ActivityItemBuilder.Context(
+                me: me,
+                friendsById: friendsByIdForBuilder,
+                groupsById: groupsByIdForBuilder,
+                fallbackCurrency: UserPreferences.defaultCurrency
+            )
+            feed = acts.map { ActivityItemBuilder.make($0, in: context) }
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
-        }
-    }
-
-    private func mapRow(_ a: ActivityDTO) -> ActivityItem {
-        let (title, subtitle) = labels(for: a.kind)
-        return ActivityItem(
-            id: a.id,
-            title: title,
-            subtitle: subtitle,
-            delta: 0,
-            currency: a.currencyDisplayCode(fallback: UserPreferences.defaultCurrency),
-            dateLabel: RelativeDateFormatters.short(from: a.createdAt),
-            avatarTint: AppColor.tint(for: a.actorId)
-        )
-    }
-
-    private func labels(for kind: ActivityKind) -> (String, String) {
-        switch kind {
-        case .expenseCreated:     return ("New expense", "Added to a group")
-        case .expenseUpdated:     return ("Expense updated", "Details changed")
-        case .expenseDeleted:     return ("Expense removed", "Deleted from group")
-        case .settlementCreated:  return ("Settlement", "Someone settled up")
-        case .groupCreated:       return ("New group", "You were added")
-        case .memberAdded:        return ("Member added", "Group changed")
-        case .memberRemoved:      return ("Member removed", "Group changed")
-        case .friendshipAccepted: return ("New friend", "You're now connected")
-        case .commentAdded:       return ("Comment", "New message on an expense")
         }
     }
 }

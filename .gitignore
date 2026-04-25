@@ -1,0 +1,32 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Xcode and SwiftPM generated files
+.xcbuild/
+**/.xcbuild/
+DerivedData/
+**/DerivedData/
+.build/
+.swiftpm/
+*.xcuserstate
+*.xcscmblueprint
+**/xcuserdata/
+**/*.xcworkspace/xcuserdata/
+**/*.xcodeproj/xcuserdata/
+
+# Build outputs and logs
+*.xcarchive
+*.xcresult
+*.dSYM/
+*.app
+*.ipa
+*.hmap
+*.swiftdoc
+*.swiftmodule
+*.swiftsourceinfo
+*.o
+*.a
+
+# Local CLI state
+supabase/.temp/

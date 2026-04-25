@@ -41,7 +41,6 @@ struct GroupDetailView: View {
                     Group {
                         switch segment {
                         case .expenses: expensesList
-                        case .balances: placeholder("Balances view coming soon")
                         case .members:  membersList
                         }
                     }

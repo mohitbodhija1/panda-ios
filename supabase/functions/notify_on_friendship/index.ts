@@ -68,6 +68,8 @@ Deno.serve(async (req) => {
     const event = (await req.json()) as WebhookPayload;
     if (event.table !== "friendships") return new Response("ignored", { status: 200 });
 
+    const sb = serviceClient();
+
     if (event.type === "UPDATE" && event.record?.status === "accepted") {
         const row = event.record;
         const inviter = row.requested_by;

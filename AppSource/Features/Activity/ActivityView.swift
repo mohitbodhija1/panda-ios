@@ -9,54 +9,73 @@ struct ActivityView: View {
     @State private var vm = ActivityViewModel()
 
     var body: some View {
-        ZStack {
-            AppColor.bgTop.ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                AppColor.bgTop.ignoresSafeArea()
 
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 12) {
-                    HStack {
-                        Text("Activity")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
-                            .foregroundStyle(AppColor.textPrimary)
-                        Spacer()
-                        Button { /* illustrative filter */ } label: {
-                            Image(systemName: "slider.horizontal.3")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundStyle(AppColor.pandaBlue)
-                                .frame(width: 40, height: 40)
-                                .background(Circle().fill(AppColor.chipBlue))
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 12) {
+                        HStack {
+                            Text("Activity")
+                                .font(.system(size: 22, weight: .bold, design: .rounded))
+                                .foregroundStyle(AppColor.textPrimary)
+                            Spacer()
                         }
-                        .buttonStyle(.plain)
-                    }
-                    .padding(.top, 4)
+                        .padding(.top, 4)
 
-                    if vm.feed.isEmpty {
-                        if vm.isLoading {
-                            ProgressView()
-                                .tint(AppColor.pandaBlue)
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 32)
+                        if vm.feed.isEmpty {
+                            if vm.isLoading {
+                                ProgressView()
+                                    .tint(AppColor.pandaBlue)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 32)
+                            } else {
+                                empty
+                            }
                         } else {
-                            empty
+                            ForEach(vm.feed) { item in
+                                if let destination = destination(for: item) {
+                                    NavigationLink(value: destination) {
+                                        ActivityRow(activity: item)
+                                    }
+                                    .buttonStyle(.plain)
+                                } else {
+                                    ActivityRow(activity: item)
+                                }
+                            }
                         }
-                    } else {
-                        ForEach(vm.feed) { ActivityRow(activity: $0) }
-                    }
 
-                    if let message = vm.errorMessage {
-                        Text(message)
-                            .font(AppFont.caption)
-                            .foregroundStyle(AppColor.negative)
-                            .multilineTextAlignment(.center)
-                    }
+                        if let message = vm.errorMessage {
+                            Text(message)
+                                .font(AppFont.caption)
+                                .foregroundStyle(AppColor.negative)
+                                .multilineTextAlignment(.center)
+                        }
 
-                    Spacer(minLength: 12)
+                        Spacer(minLength: 12)
+                    }
+                    .padding(.horizontal, 20)
                 }
-                .padding(.horizontal, 20)
+                .refreshable { await vm.load() }
             }
-            .refreshable { await vm.load() }
+            .task { await vm.load() }
+            .navigationDestination(for: ActivityDestination.self) { dest in
+                switch dest {
+                case .group(let g):  GroupDetailView(group: g)
+                case .friend(let f): FriendHistoryView(friend: f)
+                }
+            }
         }
-        .task { await vm.load() }
+    }
+
+    private func destination(for item: ActivityItem) -> ActivityDestination? {
+        if let groupId = item.groupId, let group = vm.groupsById[groupId] {
+            return .group(group)
+        }
+        if let friendId = item.friendId, let friend = vm.friendsById[friendId] {
+            return .friend(friend)
+        }
+        return nil
     }
 
     private var empty: some View {

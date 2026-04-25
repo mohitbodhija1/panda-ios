@@ -157,7 +157,11 @@ struct FriendsView: View {
             }
 
             ForEach(vm.filteredPendingInvites) { invite in
-                PendingInviteRow(invite: invite)
+                PendingInviteRow(
+                    invite: invite,
+                    isBusy: vm.pendingInviteCancelIds.contains(invite.id),
+                    onCancel: { Task { await vm.cancelInvite(invite) } }
+                )
             }
         }
     }

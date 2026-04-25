@@ -3,13 +3,16 @@
 //  PandaSplit - Bill Splitter & Group Expense Tracker
 //
 //  Renders a friend invite that has not yet been claimed by a real account
-//  (e.g. invited by email/phone and the recipient hasn't signed up).
+//  (e.g. invited by email/phone and the recipient hasn't signed up). Supports
+//  withdrawing the invite via the trailing "Cancel" button.
 //
 
 import SwiftUI
 
 struct PendingInviteRow: View {
     let invite: PendingInviteRowItem
+    var isBusy: Bool = false
+    var onCancel: (() -> Void)? = nil
 
     var body: some View {
         HStack(spacing: 14) {
@@ -35,12 +38,27 @@ struct PendingInviteRow: View {
 
             Spacer()
 
-            Text("Pending")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundStyle(AppColor.pandaBlue)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 4)
-                .background(Capsule().fill(AppColor.chipBlue))
+            if let onCancel {
+                Button {
+                    onCancel()
+                } label: {
+                    Text(isBusy ? "…" : "Cancel")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(AppColor.negative)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(Capsule().fill(AppColor.negative.opacity(0.12)))
+                }
+                .buttonStyle(.plain)
+                .disabled(isBusy)
+            } else {
+                Text("Pending")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppColor.pandaBlue)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(AppColor.chipBlue))
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
