@@ -64,6 +64,9 @@ verify_jwt = false
 [functions.friend_invite_link]
 verify_jwt = false
 
+[functions.notify_on_friendship]
+verify_jwt = false
+
 [functions.recurring_runner]
 verify_jwt = false
 

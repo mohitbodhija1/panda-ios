@@ -25,6 +25,7 @@ supabase/
     _shared/                   Service-role client + APNs helper
     notify_on_expense/         DB webhook -> APNs
     notify_on_settlement/      DB webhook -> APNs
+    notify_on_friendship/      DB webhook -> inbox + APNs (friend accept / decline)
     friend_invite_link/        DB webhook -> Resend / Twilio
     recurring_runner/          Daily cron
     fx_refresh/                Daily cron
@@ -53,6 +54,7 @@ supabase db push
 # Deploy functions
 supabase functions deploy notify_on_expense
 supabase functions deploy notify_on_settlement
+supabase functions deploy notify_on_friendship
 supabase functions deploy friend_invite_link
 supabase functions deploy recurring_runner
 supabase functions deploy fx_refresh
@@ -65,6 +67,8 @@ After `db push` and `functions deploy`, configure in the Supabase dashboard:
 1. **Database Webhooks**
    - `public.expenses` INSERT  -> Edge Function `notify_on_expense`
    - `public.settlements` INSERT -> Edge Function `notify_on_settlement`
+   - `public.friendships` UPDATE -> Edge Function `notify_on_friendship` (notify inviter when status becomes `accepted`)
+   - `public.friendships` DELETE -> Edge Function `notify_on_friendship` (notify inviter when a **pending** row is removed, e.g. recipient declined)
    - `public.friend_invites` INSERT -> Edge Function `friend_invite_link`
 2. **Scheduled Functions** (`select cron.schedule(...)` or dashboard)
    - `recurring_runner` daily at 02:00 UTC
@@ -89,6 +93,29 @@ Highlights:
 - Settlements are immutable - reverse via a new entry.
 - FX is snapshotted at expense / settlement creation against the group's
   default currency for stable historical balances.
+
+## Troubleshooting: expense save failures
+
+Three layers often show up as a generic Postgres error in the client:
+
+1. **`rpc_create_expense` runs as `SECURITY DEFINER`** since [`20260425220000_rpc_create_expense_security_definer.sql`](migrations/20260425220000_rpc_create_expense_security_definer.sql). It enforces auth + group-membership / friend rules at the top, then writes `expenses`, `expense_splits`, `activity_log`, and `pg_notify` in one transaction without re-checking RLS for each inner table. If you previously saw `42501` from this RPC, it almost always means you were still on the `SECURITY INVOKER` version with a missing `activity_log` insert policy or stale PostgREST schema cache. Re-run `supabase db push` to apply this migration; it ends with `notify pgrst, 'reload schema'` so PostgREST picks up the new function body immediately.
+
+2. **Row-level security (RLS)** on `expenses`, `expense_splits`, or `activity_log` only matters for direct table writes (i.e. *not* via `rpc_create_expense`). Friend-only expenses still require `paid_by = auth.uid()` when `group_id` is null (`expenses_member_insert` in `20260422120900_rls.sql`); group expenses require `is_group_member(group_id)`. The `activity_log` insert policy lives in [`20260425190000_activity_log_insert_rls.sql`](migrations/20260425190000_activity_log_insert_rls.sql) with an idempotent follow-up at [`20260425210000_activity_log_insert_rls_idempotent.sql`](migrations/20260425210000_activity_log_insert_rls_idempotent.sql).
+
+3. **Deferred constraint trigger** `tg_validate_expense_splits` on `expense_splits` (not RLS): split rows must sum to the expense amount (±0.02), and group-less expenses must have exactly two participants including `paid_by`. Errors here surface as `23514` and are mapped to `AppError.validation` in the client.
+
+If you still see `42501` after `supabase db push`:
+
+```sql
+-- run in Supabase SQL editor to confirm the new function is live
+select prosecdef as is_security_definer,
+       proacl
+  from pg_proc
+ where proname = 'rpc_create_expense';
+
+-- and to force a PostgREST reload manually
+notify pgrst, 'reload schema';
+```
 
 ## RPC catalogue
 
