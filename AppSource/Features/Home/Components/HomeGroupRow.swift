@@ -66,7 +66,7 @@ struct HomeGroupRow: View {
     }
 
     private var amountText: String {
-        if group.yourBalance == 0 { return "$0.00" }
+        if group.yourBalance == 0 { return Decimal(0).currencyString(code: group.currency) }
         let magnitude = (group.yourBalance < 0 ? -group.yourBalance : group.yourBalance)
             .currencyString(code: group.currency)
         return group.yourBalance < 0 ? "-\(magnitude)" : "+\(magnitude)"

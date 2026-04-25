@@ -10,6 +10,7 @@
 //  sign-out without the @AppStorage hack the prototype used.
 //
 
+import Contacts
 import Foundation
 import Observation
 import Supabase
@@ -48,6 +49,32 @@ final class AuthSession {
         user = session.user
     }
 
+    /// Native Sign in with Apple: exchange Apple's ID token for a Supabase session.
+    /// When the ID token includes a `nonce` claim, `nonce` must match the raw
+    /// value that was SHA256-hashed into `ASAuthorizationAppleIDRequest.nonce`.
+    func signInWithApple(idToken: String, nonce: String? = nil) async throws {
+        let session = try await SupabaseProvider.auth.signInWithIdToken(
+            credentials: OpenIDConnectCredentials(
+                provider: OpenIDConnectCredentials.Provider.apple,
+                idToken: idToken,
+                nonce: nonce
+            )
+        )
+        user = session.user
+    }
+
+    /// Apple only sends `fullName` on the first successful authorization. Persist
+    /// it to `user_metadata` so `handle_new_user` / profile rows stay populated.
+    func updateAppleProvidedFullName(_ fullName: PersonNameComponents?) async throws {
+        guard let fullName else { return }
+        let formatted = fullName.formatted(.name(style: .medium))
+        let trimmed = formatted.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        _ = try await SupabaseProvider.auth.update(
+            user: UserAttributes(data: ["full_name": .string(trimmed)])
+        )
+    }
+
     func signUp(email: String, password: String, fullName: String) async throws {
         let response = try await SupabaseProvider.auth.signUp(
             email: email,
@@ -71,6 +98,31 @@ final class AuthSession {
     }
 
     func signOut() async {
+        try? await SupabaseProvider.auth.signOut()
+        user = nil
+    }
+
+    /// Permanently deletes the signed-in user via GoTrue (`DELETE /auth/v1/user`).
+    /// Requires a valid session JWT. Clears local auth state afterward.
+    func deleteAccount() async throws {
+        let session = try await SupabaseProvider.auth.session
+        let base = SupabaseEnvironment.url.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        guard let url = URL(string: base + "/auth/v1/user") else {
+            throw AppError.validation("Invalid Supabase URL.")
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        request.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
+        request.setValue(SupabaseEnvironment.anonKey, forHTTPHeaderField: "apikey")
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw AppError.unknown(NSError(domain: "AuthSession", code: -1))
+        }
+        guard (200...299).contains(http.statusCode) else {
+            throw AppError.accountDeletionFailed(http.statusCode)
+        }
+
         try? await SupabaseProvider.auth.signOut()
         user = nil
     }

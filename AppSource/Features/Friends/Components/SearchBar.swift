@@ -16,9 +16,13 @@ struct SearchBar: View {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 15, weight: .semibold))
                 .foregroundStyle(AppColor.textSecondary)
-            TextField(placeholder, text: $text)
+            TextField(
+                "",
+                text: $text,
+                prompt: Text(placeholder).foregroundStyle(AppColor.textSecondary)
+            )
                 .font(AppFont.bodyRegular)
-                .foregroundStyle(AppColor.textPrimary)
+                .foregroundStyle(Color.primary)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
         }

@@ -11,6 +11,7 @@ import Foundation
 enum AppError: Error, LocalizedError {
     case notAuthenticated
     case notFound
+    case accountDeletionFailed(Int)
     case validation(String)
     case server(String)
     case network(URLError)
@@ -20,6 +21,8 @@ enum AppError: Error, LocalizedError {
         switch self {
         case .notAuthenticated:    return "You need to sign in to do that."
         case .notFound:            return "Not found."
+        case .accountDeletionFailed(let code):
+            return "Could not delete your account (error \(code)). Try again or contact support."
         case .validation(let m):   return m
         case .server(let m):       return m
         case .network(let e):      return e.localizedDescription

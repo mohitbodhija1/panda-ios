@@ -87,16 +87,24 @@ struct TintedFormRowField: View {
 
                 Group {
                     if isSecure {
-                        SecureField(placeholder, text: $text)
+                        SecureField(
+                            "",
+                            text: $text,
+                            prompt: Text(placeholder).foregroundStyle(AppColor.textSecondary)
+                        )
                     } else {
-                        TextField(placeholder, text: $text)
-                            .keyboardType(keyboard)
-                            .textInputAutocapitalization(autocap)
-                            .autocorrectionDisabled(keyboard == .emailAddress || keyboard == .URL)
+                        TextField(
+                            "",
+                            text: $text,
+                            prompt: Text(placeholder).foregroundStyle(AppColor.textSecondary)
+                        )
+                        .keyboardType(keyboard)
+                        .textInputAutocapitalization(autocap)
+                        .autocorrectionDisabled(keyboard == .emailAddress || keyboard == .URL)
                     }
                 }
                 .font(AppFont.bodyRegular)
-                .foregroundStyle(AppColor.textPrimary)
+                .foregroundStyle(Color.primary)
             }
 
             Spacer(minLength: 8)

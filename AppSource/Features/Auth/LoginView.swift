@@ -13,6 +13,7 @@ struct LoginView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isSubmitting: Bool = false
+    @State private var isAppleSigningIn: Bool = false
     @State private var errorMessage: String?
 
     var body: some View {
@@ -66,7 +67,7 @@ struct LoginView: View {
                     PrimaryButton(title: isSubmitting ? "Logging in..." : "Log In") {
                         Task { await submit() }
                     }
-                    .disabled(isSubmitting || email.isEmpty || password.isEmpty)
+                    .disabled(isSubmitting || isAppleSigningIn || email.isEmpty || password.isEmpty)
                     .padding(.top, 18)
 
                     if let errorMessage {
@@ -79,7 +80,7 @@ struct LoginView: View {
                     orDivider
                         .padding(.vertical, 18)
 
-                    AppleSignInButton { /* TODO: integrate Sign in with Apple via SupabaseProvider.auth.signInWithIdToken */ }
+                    SignInWithAppleAuthButton(isBusy: $isAppleSigningIn, errorMessage: $errorMessage)
 
                     signUpPrompt
                         .padding(.top, 22)
@@ -92,6 +93,7 @@ struct LoginView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
+            .scrollDismissesKeyboardForForms()
         }
     }
 

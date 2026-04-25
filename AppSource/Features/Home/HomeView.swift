@@ -9,6 +9,7 @@ struct HomeView: View {
     @State private var vm = HomeViewModel()
     @State private var showPaywall: Bool = false
     @State private var showSettings: Bool = false
+    @State private var showNotifications: Bool = false
 
     var body: some View {
         ZStack {
@@ -29,7 +30,9 @@ struct HomeView: View {
 
                     VStack(spacing: 10) {
                         SectionHeader(title: "Recent Activity")
-                        if vm.recentActivity.isEmpty {
+                        if vm.isLoading && vm.recentActivity.isEmpty {
+                            loadingCard
+                        } else if vm.recentActivity.isEmpty {
                             emptyCard("No activity yet. Create a group or add an expense to get started.")
                         } else {
                             ForEach(vm.recentActivity) { ActivityRow(activity: $0) }
@@ -38,7 +41,9 @@ struct HomeView: View {
 
                     VStack(spacing: 10) {
                         SectionHeader(title: "Your Groups")
-                        if vm.groups.isEmpty {
+                        if vm.isLoading && vm.groups.isEmpty {
+                            loadingCard
+                        } else if vm.groups.isEmpty {
                             emptyCard("You aren't in any groups yet.")
                         } else {
                             ForEach(vm.groups.prefix(1)) { HomeGroupRow(group: $0) }
@@ -67,6 +72,9 @@ struct HomeView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView()
         }
+        .sheet(isPresented: $showNotifications) {
+            NotificationsSheetView()
+        }
     }
 
     private var topBar: some View {
@@ -82,20 +90,36 @@ struct HomeView: View {
                 .foregroundStyle(AppColor.textPrimary)
             Spacer()
             HStack(spacing: 16) {
-                Button { /* illustrative */ } label: {
+                Button { showNotifications = true } label: {
                     Image(systemName: "bell.fill")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(AppColor.textPrimary)
                 }
-                Button { showPaywall = true } label: {
-                    Image(systemName: "crown.fill")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(AppColor.goldAccent)
-                }
+                // Premium / paywall entry — re-enable when subscription ships.
+                // Button { showPaywall = true } label: {
+                //     Image(systemName: "crown.fill")
+                //         .font(.system(size: 18, weight: .semibold))
+                //         .foregroundStyle(AppColor.goldAccent)
+                // }
             }
         }
         .buttonStyle(.plain)
         .padding(.vertical, 6)
+    }
+
+    private var loadingCard: some View {
+        ProgressView()
+            .tint(AppColor.pandaBlue)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 28)
+            .background(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .fill(Color.white)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(AppColor.cardHairline, lineWidth: 1)
+            )
     }
 
     private func emptyCard(_ text: String) -> some View {

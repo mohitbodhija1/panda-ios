@@ -41,13 +41,21 @@ final class FriendsViewModel {
         Self.filter(outgoingInvites, by: searchText)
     }
 
+    /// Main "Your Friends" list: accepted plus profile-based invites you sent (still pending).
+    var friendsIncludingOutgoing: [FriendRowItem] { friends + outgoingInvites }
+
+    var filteredFriendsForMainList: [FriendRowItem] {
+        Self.filter(friendsIncludingOutgoing, by: searchText)
+    }
+
+    /// Email/phone invites not tied to a profile row yet (shown only under Invited).
+    var shouldShowInvitedSection: Bool { !pendingInvites.isEmpty }
+
     var filteredPendingInvites: [PendingInviteRowItem] {
         let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
         guard !q.isEmpty else { return pendingInvites }
         return pendingInvites.filter { $0.label.lowercased().contains(q) }
     }
-
-    var hasAnyOutgoing: Bool { !outgoingInvites.isEmpty || !pendingInvites.isEmpty }
 
     func load() async {
         isLoading = true

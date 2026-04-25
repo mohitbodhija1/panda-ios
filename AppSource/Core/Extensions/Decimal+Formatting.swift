@@ -19,16 +19,18 @@ extension Decimal {
         formatter.locale = Locale(identifier: "en_US")
         formatter.maximumFractionDigits = 2
         formatter.minimumFractionDigits = 2
-        return formatter.string(from: self as NSDecimalNumber) ?? "$0.00"
+        return formatter.string(from: self as NSDecimalNumber) ?? "\(code) 0.00"
     }
 
-    /// Non-parameterised accessor for callers that don't care about currency.
-    var currencyString: String { currencyString(code: "USD") }
+    /// Uses the last-known profile default from `UserPreferences` (synced on Home load).
+    var currencyString: String { currencyString(code: UserPreferences.defaultCurrency) }
 
-    /// Signed `+$45.00` / `-$12.00`; zero renders as `+$0.00` because callers
-    /// that care about the "settled" state have already branched on sign.
-    var signedCurrencyString: String {
-        let magnitude = (self < 0 ? -self : self).currencyString
+    /// Signed `+$45.00` / `-$12.00` in the given ISO currency code.
+    func signedCurrencyString(code: String) -> String {
+        let magnitude = (self < 0 ? -self : self).currencyString(code: code)
         return self < 0 ? "-\(magnitude)" : "+\(magnitude)"
     }
+
+    /// Signed amount using `UserPreferences.defaultCurrency`.
+    var signedCurrencyString: String { signedCurrencyString(code: UserPreferences.defaultCurrency) }
 }

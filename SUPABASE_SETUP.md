@@ -102,7 +102,26 @@ func application(_ application: UIApplication,
 
 The `notify_on_expense` / `notify_on_settlement` Edge Functions look these up.
 
-## 5. Disable email confirmation on the hosted project
+## 5. Sign in with Apple (native iOS)
+
+The app exchanges Apple's ID token for a Supabase session via
+`AuthSession.signInWithApple` ([AuthSession.swift](AppSource/Core/Supabase/AuthSession.swift)).
+Configure the provider once per hosted project:
+
+1. In the [Supabase Dashboard](https://supabase.com/dashboard) open **Authentication → Sign In / Providers → Apple** and enable the provider.
+2. For a **native-only** iOS app, add your Xcode **Bundle Identifier** (e.g.
+   `bodhija.PandaSplit---Bill-Splitter---Group-Expense-Tracker`) to **Client IDs**
+   so GoTrue accepts tokens issued to that app. You do **not** need the OAuth
+   Services ID, website URLs, or rotating `.p8` client secret unless you also
+   offer Sign in with Apple on the web.
+3. In [Apple Developer → Identifiers](https://developer.apple.com/account/resources/identifiers/list/bundleId),
+   edit the same App ID and turn on the **Sign In with Apple** capability so the
+   entitlement in [PandaSplit.entitlements](PandaSplit.entitlements) is valid in
+   production.
+
+Official reference: [Login with Apple (Swift)](https://supabase.com/docs/guides/auth/social-login/auth-apple?platform=swift).
+
+## 6. Disable email confirmation on the hosted project
 
 `supabase db push` only deploys SQL migrations, **not** the `[auth]` block in
 `supabase/config.toml`. The local stack already runs with
@@ -115,7 +134,7 @@ a `User` with no `Session` and the app's `signIn` fallback in
 `[AppSource/Core/Supabase/AuthSession.swift](AppSource/Core/Supabase/AuthSession.swift)`
 will surface an "Email not confirmed" error.
 
-## 6. Local development
+## 7. Local development
 
 ```bash
 cd ../supabase

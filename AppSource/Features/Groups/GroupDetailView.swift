@@ -10,7 +10,6 @@ struct GroupDetailView: View {
 
     @State private var vm: GroupDetailViewModel
     @State private var segment: GroupSegment = .expenses
-    @State private var showSettings: Bool = false
     @State private var showAddExpense: Bool = false
     @Environment(\.dismiss) private var dismiss
 
@@ -20,7 +19,7 @@ struct GroupDetailView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             AppColor.bgTop.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -32,7 +31,8 @@ struct GroupDetailView: View {
                     GroupStatStrip(
                         totalExpenses: vm.totalExpenses,
                         youOwe: vm.youOwe,
-                        youAreOwed: vm.youAreOwed
+                        youAreOwed: vm.youAreOwed,
+                        currencyCode: group.currency
                     )
 
                     ExpensesSegmented(selection: $segment)
@@ -52,34 +52,36 @@ struct GroupDetailView: View {
                             .multilineTextAlignment(.center)
                     }
 
-                    Spacer(minLength: 120)
+                    Spacer(minLength: 24)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 4)
             }
+            .scrollDismissesKeyboardForForms()
             .refreshable { await vm.load() }
-
-            PrimaryButton(title: "Add Expense") { showAddExpense = true }
-                .padding(.horizontal, 20)
-                .padding(.bottom, 16)
-                .background(
-                    LinearGradient(
-                        colors: [AppColor.bgTop.opacity(0.0), AppColor.bgTop],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: 90)
-                    .offset(y: 20),
-                    alignment: .top
-                )
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                VStack(spacing: 0) {
+                    PrimaryButton(title: "Add Expense") { showAddExpense = true }
+                        .padding(.horizontal, 20)
+                        .padding(.top, 10)
+                        .padding(.bottom, 12)
+                        .background(
+                            LinearGradient(
+                                colors: [AppColor.bgTop.opacity(0), AppColor.bgTop],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: 24)
+                            .offset(y: -24),
+                            alignment: .top
+                        )
+                        .background(AppColor.bgTop)
+                }
+            }
         }
         .task { await vm.load() }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
-        .sheet(isPresented: $showSettings) {
-            GroupSettingsSheet()
-                .presentationDetents([.medium])
-        }
         .fullScreenCover(isPresented: $showAddExpense, onDismiss: {
             Task { await vm.load() }
         }) {
@@ -112,15 +114,7 @@ struct GroupDetailView: View {
 
             Spacer()
 
-            Button { showSettings = true } label: {
-                Image(systemName: "gearshape.fill")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(AppColor.textPrimary)
-                    .frame(width: 40, height: 40)
-                    .background(Circle().fill(Color.white))
-                    .overlay(Circle().stroke(AppColor.cardHairline, lineWidth: 1))
-            }
-            .buttonStyle(.plain)
+            Color.clear.frame(width: 40, height: 40)
         }
     }
 

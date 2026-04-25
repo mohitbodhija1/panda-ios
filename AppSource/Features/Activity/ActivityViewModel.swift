@@ -35,7 +35,7 @@ final class ActivityViewModel {
             title: title,
             subtitle: subtitle,
             delta: 0,
-            currency: "USD",
+            currency: a.currencyDisplayCode(fallback: UserPreferences.defaultCurrency),
             dateLabel: RelativeDateFormatters.short(from: a.createdAt),
             avatarTint: AppColor.tint(for: a.actorId)
         )

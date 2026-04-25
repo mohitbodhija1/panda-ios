@@ -30,8 +30,15 @@ struct ActivityView: View {
                     }
                     .padding(.top, 4)
 
-                    if vm.feed.isEmpty && !vm.isLoading {
-                        empty
+                    if vm.feed.isEmpty {
+                        if vm.isLoading {
+                            ProgressView()
+                                .tint(AppColor.pandaBlue)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 32)
+                        } else {
+                            empty
+                        }
                     } else {
                         ForEach(vm.feed) { ActivityRow(activity: $0) }
                     }

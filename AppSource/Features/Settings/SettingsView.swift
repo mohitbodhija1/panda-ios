@@ -25,6 +25,9 @@ struct SettingsView: View {
 
     @State private var vm = SettingsViewModel()
     @State private var showSignOutConfirm: Bool = false
+    @State private var showDeleteAccountConfirm: Bool = false
+    @State private var isDeletingAccount: Bool = false
+    @State private var deleteAccountError: String?
     @State private var path: [SettingsRoute] = []
     @Environment(AuthSession.self) private var session
     @Environment(\.dismiss) private var dismiss
@@ -77,6 +80,15 @@ struct SettingsView: View {
 
                         sectionHeader("Account")
 
+                        deleteAccountRow
+
+                        if let deleteAccountError {
+                            Text(deleteAccountError)
+                                .font(AppFont.caption)
+                                .foregroundStyle(AppColor.negative)
+                                .multilineTextAlignment(.center)
+                        }
+
                         signOutRow
 
                         Spacer(minLength: 12)
@@ -107,6 +119,28 @@ struct SettingsView: View {
             Button("Cancel", role: .cancel) {}
         } message: {
             Text("You'll need to sign in again to access your groups and expenses.")
+        }
+        .confirmationDialog(
+            "Delete your PandaSplit account?",
+            isPresented: $showDeleteAccountConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete Account", role: .destructive) {
+                Task {
+                    isDeletingAccount = true
+                    deleteAccountError = nil
+                    defer { isDeletingAccount = false }
+                    do {
+                        try await session.deleteAccount()
+                        dismiss()
+                    } catch {
+                        deleteAccountError = AppError.wrap(error).errorDescription
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This permanently removes your account. You cannot undo this.")
         }
     }
 
@@ -154,6 +188,36 @@ struct SettingsView: View {
         let subject = "PandaSplit Support".addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? ""
         guard let url = URL(string: "mailto:\(Self.supportEmail)?subject=\(subject)") else { return }
         openURL(url)
+    }
+
+    private var deleteAccountRow: some View {
+        Button {
+            showDeleteAccountConfirm = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "trash.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AppColor.negative)
+                    .frame(width: 32, height: 32)
+                    .background(Circle().fill(AppColor.negative.opacity(0.12)))
+                Text(isDeletingAccount ? "Deleting…" : "Delete Account")
+                    .font(AppFont.rowTitle)
+                    .foregroundStyle(AppColor.negative)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.white)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(AppColor.cardHairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isDeletingAccount)
     }
 
     private var signOutRow: some View {

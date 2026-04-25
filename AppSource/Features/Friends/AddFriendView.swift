@@ -3,14 +3,17 @@
 //  PandaSplit - Bill Splitter & Group Expense Tracker
 //
 
+import PhotosUI
 import SwiftUI
 
 struct AddFriendView: View {
     @State private var vm = AddFriendViewModel()
     @Environment(\.dismiss) private var dismiss
+    @State private var photoPickerItem: PhotosPickerItem?
+    @State private var avatarPreviewData: Data?
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             AppColor.bgTop.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -27,8 +30,20 @@ struct AddFriendView: View {
                         .scaledToFit()
                         .frame(height: 190)
 
-                    AvatarPickerCircle()
-                        .padding(.top, -16)
+                    PhotosPicker(selection: $photoPickerItem, matching: .images, photoLibrary: .shared()) {
+                        AvatarPickerCircle(avatarData: avatarPreviewData)
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, -16)
+                    .onChange(of: photoPickerItem) { _, newItem in
+                        Task {
+                            guard let newItem else {
+                                avatarPreviewData = nil
+                                return
+                            }
+                            avatarPreviewData = try? await newItem.loadTransferable(type: Data.self)
+                        }
+                    }
 
                     TintedFormCard {
                         TintedFormRowField(
@@ -66,32 +81,39 @@ struct AddFriendView: View {
                             .multilineTextAlignment(.center)
                     }
 
-                    Spacer(minLength: 100)
+                    Spacer(minLength: 24)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 4)
             }
-
-            PrimaryButton(title: vm.isSubmitting ? "Sending…" : "Send Invite") {
-                Task {
-                    if await vm.submit() { dismiss() }
+            .scrollDismissesKeyboardForForms()
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                VStack(spacing: 0) {
+                    PrimaryButton(title: vm.isSubmitting ? "Sending…" : "Send Invite") {
+                        Task {
+                            if await vm.submit() { dismiss() }
+                        }
+                    }
+                    .disabled(!vm.canSubmit)
+                    .opacity(vm.canSubmit ? 1 : 0.6)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    .padding(.bottom, 12)
+                    .background(
+                        LinearGradient(
+                            colors: [AppColor.bgTop.opacity(0), AppColor.bgTop],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 24)
+                        .offset(y: -24),
+                        alignment: .top
+                    )
+                    .background(AppColor.bgTop)
                 }
             }
-            .disabled(!vm.canSubmit)
-            .opacity(vm.canSubmit ? 1 : 0.6)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 16)
-            .background(
-                LinearGradient(
-                    colors: [AppColor.bgTop.opacity(0), AppColor.bgTop],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 90)
-                .offset(y: 20),
-                alignment: .top
-            )
         }
+        .keyboardDismissToolbar()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
     }

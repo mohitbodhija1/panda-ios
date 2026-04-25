@@ -5,6 +5,7 @@
 //  Sign-up screen with a live-validated password checklist.
 //
 
+import AuthenticationServices
 import SwiftUI
 
 struct SignUpView: View {
@@ -15,6 +16,7 @@ struct SignUpView: View {
     @State private var email: String = ""
     @State private var password: String = ""
     @State private var isSubmitting: Bool = false
+    @State private var isAppleSigningIn: Bool = false
     @State private var errorMessage: String?
 
     private var hasMinimumLength: Bool { password.count >= 8 }
@@ -83,7 +85,7 @@ struct SignUpView: View {
                     PrimaryButton(title: isSubmitting ? "Creating account..." : "Sign Up") {
                         Task { await submit() }
                     }
-                    .disabled(isSubmitting || !canSubmit)
+                    .disabled(isSubmitting || isAppleSigningIn || !canSubmit)
                     .padding(.top, 22)
 
                     if let errorMessage {
@@ -92,6 +94,15 @@ struct SignUpView: View {
                             .foregroundStyle(AppColor.negative)
                             .padding(.top, 8)
                     }
+
+                    orDivider
+                        .padding(.vertical, 18)
+
+                    SignInWithAppleAuthButton(
+                        isBusy: $isAppleSigningIn,
+                        errorMessage: $errorMessage,
+                        buttonLabel: .signUp
+                    )
 
                     HStack(spacing: 4) {
                         Text("Already have an account?")
@@ -111,6 +122,7 @@ struct SignUpView: View {
                 .padding(.horizontal, 24)
                 .padding(.bottom, 24)
             }
+            .scrollDismissesKeyboardForForms()
 
             OnboardingBackButton { dismiss() }
                 .padding(.top, 8)
@@ -122,6 +134,20 @@ struct SignUpView: View {
 
     private var canSubmit: Bool {
         !fullName.isEmpty && !email.isEmpty && hasMinimumLength && hasNumber && hasUppercase
+    }
+
+    private var orDivider: some View {
+        HStack(spacing: 12) {
+            Rectangle()
+                .fill(AppColor.cardHairline)
+                .frame(height: 1)
+            Text("or")
+                .font(AppFont.caption)
+                .foregroundStyle(AppColor.textSecondary)
+            Rectangle()
+                .fill(AppColor.cardHairline)
+                .frame(height: 1)
+        }
     }
 
     private func submit() async {

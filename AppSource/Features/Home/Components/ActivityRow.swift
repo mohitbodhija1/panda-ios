@@ -33,9 +33,9 @@ struct ActivityRow: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text(activity.delta.signedCurrencyString)
+                Text(trailingAmountText)
                     .font(AppFont.amountSmall)
-                    .foregroundStyle(activity.delta >= 0 ? AppColor.positive : AppColor.negative)
+                    .foregroundStyle(activity.delta == 0 ? AppColor.textSecondary : (activity.delta >= 0 ? AppColor.positive : AppColor.negative))
                 Text(activity.dateLabel)
                     .font(.system(size: 11))
                     .foregroundStyle(AppColor.textSecondary)
@@ -55,5 +55,10 @@ struct ActivityRow: View {
 
     private var deltaIcon: String {
         activity.delta >= 0 ? "arrow.down.left" : "arrow.up.right"
+    }
+
+    private var trailingAmountText: String {
+        if activity.delta == 0 { return "—" }
+        return activity.delta.signedCurrencyString(code: activity.currency)
     }
 }

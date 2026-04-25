@@ -24,7 +24,7 @@ struct AddExpenseView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             AppColor.bgTop.ignoresSafeArea()
 
             ScrollView(showsIndicators: false) {
@@ -95,32 +95,39 @@ struct AddExpenseView: View {
                             .multilineTextAlignment(.center)
                     }
 
-                    Spacer(minLength: 100)
+                    Spacer(minLength: 24)
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 4)
             }
-
-            PrimaryButton(title: vm.isSubmitting ? "Adding…" : "Add Expense") {
-                Task {
-                    if await vm.submit() { dismiss() }
+            .scrollDismissesKeyboardForForms()
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                VStack(spacing: 0) {
+                    PrimaryButton(title: vm.isSubmitting ? "Adding…" : "Add Expense") {
+                        Task {
+                            if await vm.submit() { dismiss() }
+                        }
+                    }
+                    .disabled(!vm.canSubmit)
+                    .opacity(vm.canSubmit ? 1 : 0.6)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    .padding(.bottom, 12)
+                    .background(
+                        LinearGradient(
+                            colors: [AppColor.bgTop.opacity(0), AppColor.bgTop],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 24)
+                        .offset(y: -24),
+                        alignment: .top
+                    )
+                    .background(AppColor.bgTop)
                 }
             }
-            .disabled(!vm.canSubmit)
-            .opacity(vm.canSubmit ? 1 : 0.6)
-            .padding(.horizontal, 20)
-            .padding(.bottom, 16)
-            .background(
-                LinearGradient(
-                    colors: [AppColor.bgTop.opacity(0), AppColor.bgTop],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 90)
-                .offset(y: 20),
-                alignment: .top
-            )
         }
+        .keyboardDismissToolbar()
         .task { await vm.load() }
         .onChange(of: vm.selectedGroupId) { _, _ in
             vm.syncCurrencyWithSelectedGroup()

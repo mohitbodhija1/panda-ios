@@ -72,7 +72,7 @@ struct FriendRow: View {
     }
 
     private var amountText: String {
-        if friend.balance == 0 { return "$0.00" }
+        if friend.balance == 0 { return Decimal(0).currencyString(code: friend.currency) }
         let magnitude = (friend.balance < 0 ? -friend.balance : friend.balance)
             .currencyString(code: friend.currency)
         return friend.balance < 0 ? "-\(magnitude)" : "+\(magnitude)"

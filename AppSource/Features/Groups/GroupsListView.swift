@@ -16,8 +16,15 @@ struct GroupsListView: View {
                 VStack(spacing: 14) {
                     header
 
-                    if vm.groups.isEmpty && !vm.isLoading {
-                        emptyCard
+                    if vm.groups.isEmpty {
+                        if vm.isLoading {
+                            ProgressView()
+                                .tint(AppColor.pandaBlue)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 32)
+                        } else {
+                            emptyCard
+                        }
                     } else {
                         ForEach(vm.groups) { group in
                             NavigationLink(value: group) {

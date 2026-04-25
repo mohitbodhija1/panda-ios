@@ -16,6 +16,13 @@ struct FriendsView: View {
                 VStack(spacing: 18) {
                     topBar
 
+                    if vm.isLoading {
+                        ProgressView()
+                            .tint(AppColor.pandaBlue)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 4)
+                    }
+
                     SearchBar(placeholder: "Search friends", text: Binding(
                         get: { vm.searchText },
                         set: { vm.searchText = $0 }
@@ -29,7 +36,7 @@ struct FriendsView: View {
 
                     friendsSection
 
-                    if vm.hasAnyOutgoing {
+                    if vm.shouldShowInvitedSection {
                         invitedSection
                     }
 
@@ -47,6 +54,7 @@ struct FriendsView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 4)
             }
+            .scrollDismissesKeyboardForForms()
             .refreshable { await vm.load() }
         }
         .task { await vm.load() }
@@ -69,15 +77,20 @@ struct FriendsView: View {
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AppColor.textPrimary)
                 Spacer()
-                Text("\(vm.friends.count) total")
+                Text("\(vm.friendsIncludingOutgoing.count) total")
                     .font(AppFont.caption)
                     .foregroundStyle(AppColor.textSecondary)
             }
 
-            if vm.friends.isEmpty {
+            if vm.isLoading && vm.friendsIncludingOutgoing.isEmpty {
+                ProgressView()
+                    .tint(AppColor.pandaBlue)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 32)
+            } else if vm.friendsIncludingOutgoing.isEmpty {
                 emptyCard("You haven't added any friends yet. Invite someone to get started.")
             } else {
-                ForEach(vm.filtered) { friend in
+                ForEach(vm.filteredFriendsForMainList) { friend in
                     NavigationLink(value: FriendsRoute.addExpense(friend)) {
                         FriendRow(friend: friend)
                     }
@@ -100,12 +113,31 @@ struct FriendsView: View {
             }
 
             ForEach(vm.filteredIncoming) { friend in
-                FriendRequestRow(
-                    friend: friend,
-                    isBusy: vm.pendingActionIds.contains(friend.id),
-                    onAccept: { Task { await vm.acceptRequest(friend) } },
-                    onDecline: { Task { await vm.declineRequest(friend) } }
-                )
+                VStack(alignment: .leading, spacing: 10) {
+                    FriendRequestRow(
+                        friend: friend,
+                        isBusy: vm.pendingActionIds.contains(friend.id),
+                        onAccept: { Task { await vm.acceptRequest(friend) } },
+                        onDecline: { Task { await vm.declineRequest(friend) } }
+                    )
+
+                    NavigationLink(value: FriendsRoute.addExpense(friend)) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "banknote.fill")
+                                .font(.system(size: 14, weight: .semibold))
+                            Text("Add expense with \(friend.name)")
+                                .font(AppFont.bodyRegular)
+                        }
+                        .foregroundStyle(AppColor.pandaBlue)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .fill(AppColor.chipBlue)
+                        )
+                    }
+                    .buttonStyle(.plain)
+                }
             }
         }
     }
@@ -117,16 +149,9 @@ struct FriendsView: View {
                     .font(.system(size: 17, weight: .semibold))
                     .foregroundStyle(AppColor.textPrimary)
                 Spacer()
-                Text("\(vm.outgoingInvites.count + vm.pendingInvites.count) pending")
+                Text("\(vm.pendingInvites.count) pending")
                     .font(AppFont.caption)
                     .foregroundStyle(AppColor.textSecondary)
-            }
-
-            ForEach(vm.filteredOutgoing) { friend in
-                NavigationLink(value: FriendsRoute.addExpense(friend)) {
-                    FriendRow(friend: friend)
-                }
-                .buttonStyle(.plain)
             }
 
             ForEach(vm.filteredPendingInvites) { invite in

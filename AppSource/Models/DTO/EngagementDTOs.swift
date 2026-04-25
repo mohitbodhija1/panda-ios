@@ -156,3 +156,24 @@ struct AnyCodable: Codable, Hashable {
         }
     }
 }
+
+extension AnyCodable {
+    /// When the JSON value decoded as a string (e.g. ISO currency in activity payload).
+    var stringFromJSON: String? {
+        switch value {
+        case let s as String: return s
+        default: return nil
+        }
+    }
+}
+
+extension ActivityDTO {
+    /// Currency from RPC-written payload (`currency` key), else fallback (e.g. profile default).
+    func currencyDisplayCode(fallback: String) -> String {
+        guard let payload,
+              let raw = payload["currency"]?.stringFromJSON?.trimmingCharacters(in: .whitespacesAndNewlines),
+              !raw.isEmpty
+        else { return fallback.uppercased() }
+        return raw.uppercased()
+    }
+}

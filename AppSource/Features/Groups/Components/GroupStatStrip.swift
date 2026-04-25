@@ -9,14 +9,15 @@ struct GroupStatStrip: View {
     let totalExpenses: Decimal
     let youOwe: Decimal
     let youAreOwed: Decimal
+    var currencyCode: String
 
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
-            column(title: "Total Expenses", amount: totalExpenses.currencyString, color: AppColor.textPrimary)
+            column(title: "Total Expenses", amount: totalExpenses.currencyString(code: currencyCode), color: AppColor.textPrimary)
             divider
-            column(title: "You Owe", amount: youOwe.currencyString, color: AppColor.negative)
+            column(title: "You Owe", amount: youOwe.currencyString(code: currencyCode), color: AppColor.negative)
             divider
-            column(title: "You're Owed", amount: youAreOwed.currencyString, color: AppColor.positive)
+            column(title: "You're Owed", amount: youAreOwed.currencyString(code: currencyCode), color: AppColor.positive)
         }
         .padding(.vertical, 16)
         .padding(.horizontal, 14)
@@ -50,7 +51,7 @@ struct GroupStatStrip: View {
 }
 
 #Preview {
-    GroupStatStrip(totalExpenses: 480, youOwe: 120, youAreOwed: 0)
+    GroupStatStrip(totalExpenses: 480, youOwe: 120, youAreOwed: 0, currencyCode: "USD")
         .padding()
         .background(AppColor.bgTop)
 }
