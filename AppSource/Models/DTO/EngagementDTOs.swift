@@ -46,6 +46,7 @@ enum NotificationKind: String, Codable, Hashable {
     case settlementCreated = "settlement_created"
     case friendInvite     = "friend_invite"
     case friendAccepted   = "friend_accepted"
+    case friendDeclined   = "friend_declined"
     case commentAdded     = "comment_added"
     case recurringRun     = "recurring_run"
 }

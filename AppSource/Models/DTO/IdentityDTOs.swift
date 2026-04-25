@@ -29,6 +29,16 @@ struct ProfileDTO: Codable, Identifiable, Hashable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
+
+    /// Best-effort label for lists and avatars (friends may lack full_name / username).
+    var displayName: String {
+        let candidates = [fullName, username, email, phone].compactMap { raw -> String? in
+            guard let raw else { return nil }
+            let t = raw.trimmingCharacters(in: .whitespacesAndNewlines)
+            return t.isEmpty ? nil : t
+        }
+        return candidates.first ?? "Friend"
+    }
 }
 
 enum FriendshipStatus: String, Codable, Hashable {
@@ -67,6 +77,8 @@ struct FriendRequestDTO: Codable, Hashable, Identifiable {
     let userId: UUID
     let fullName: String?
     let username: String?
+    let email: String?
+    let phone: String?
     let avatarUrl: String?
     let defaultCurrency: String
     let requestedBy: UUID
@@ -75,7 +87,7 @@ struct FriendRequestDTO: Codable, Hashable, Identifiable {
     var id: UUID { userId }
 
     enum CodingKeys: String, CodingKey {
-        case username
+        case username, email, phone
         case userId = "user_id"
         case fullName = "full_name"
         case avatarUrl = "avatar_url"

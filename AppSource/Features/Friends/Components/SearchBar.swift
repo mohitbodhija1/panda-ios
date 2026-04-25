@@ -22,7 +22,7 @@ struct SearchBar: View {
                 prompt: Text(placeholder).foregroundStyle(AppColor.textSecondary)
             )
                 .font(AppFont.bodyRegular)
-                .foregroundStyle(Color.primary)
+                .foregroundStyle(AppColor.textPrimary)
                 .textInputAutocapitalization(.never)
                 .autocorrectionDisabled()
         }

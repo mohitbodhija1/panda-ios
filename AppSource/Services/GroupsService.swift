@@ -82,6 +82,26 @@ final class GroupsService {
             .value
     }
 
+    /// Owner-only: invite one or more existing profiles into a group.
+    /// Routed through `rpc_add_group_members` (SECURITY DEFINER) so the
+    /// caller's ownership is asserted from `auth.uid()` server-side and
+    /// every successful insert also writes an `activity_log` row.
+    /// Returns the number of new members actually added (idempotent).
+    @discardableResult
+    func addMembers(groupId: UUID, friendIds: [UUID]) async throws -> Int {
+        guard !friendIds.isEmpty else { return 0 }
+        struct Args: Encodable {
+            let p_group_id: UUID
+            let p_user_ids: [UUID]
+        }
+        return try await db
+            .rpc("rpc_add_group_members",
+                 params: Args(p_group_id: groupId, p_user_ids: friendIds))
+            .single()
+            .execute()
+            .value
+    }
+
     func leave(groupId: UUID) async throws {
         guard let me = try? await SupabaseProvider.auth.user().id else { throw AppError.notAuthenticated }
         try await db.from("group_members")

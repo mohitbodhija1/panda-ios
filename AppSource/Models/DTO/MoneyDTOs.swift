@@ -152,6 +152,42 @@ struct SettlementDTO: Codable, Identifiable, Hashable {
     }
 }
 
+/// One row from `rpc_friend_ledger`: an expense or a settlement between the
+/// current user and a specific friend, with `myShare` already signed from the
+/// caller's perspective (positive = friend owes me for this entry).
+struct FriendLedgerEntryDTO: Codable, Identifiable, Hashable {
+    enum Kind: String, Codable, Hashable {
+        case expense
+        case settlement
+    }
+
+    let kind: Kind
+    let entryId: UUID
+    let occurredOn: String           // ISO yyyy-MM-dd
+    let title: String
+    let amount: Decimal              // gross, always positive
+    let currency: String
+    let myShare: Decimal             // signed from caller's perspective
+    let iPaid: Bool
+    let groupId: UUID?
+    let groupName: String?
+    let emoji: String?
+    let method: String?              // settlements only
+    let note: String?                // settlements only
+
+    var id: UUID { entryId }
+
+    enum CodingKeys: String, CodingKey {
+        case kind, title, amount, currency, emoji, method, note
+        case entryId = "entry_id"
+        case occurredOn = "occurred_on"
+        case myShare = "my_share"
+        case iPaid = "i_paid"
+        case groupId = "group_id"
+        case groupName = "group_name"
+    }
+}
+
 struct RecurringExpenseDTO: Codable, Identifiable, Hashable {
     let id: UUID
     let groupId: UUID?

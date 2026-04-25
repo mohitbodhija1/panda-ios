@@ -7,6 +7,7 @@ import SwiftUI
 
 struct AddGroupView: View {
     @State private var vm = AddGroupViewModel()
+    @State private var showFriendsPicker: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -53,6 +54,17 @@ struct AddGroupView: View {
                             title: "Default Currency",
                             code: Binding(get: { vm.defaultCurrency }, set: { vm.defaultCurrency = $0 })
                         )
+                        Button { showFriendsPicker = true } label: {
+                            TintedFormRow(
+                                icon: "person.2.fill",
+                                tint: AppColor.chipBlue,
+                                title: "Add Friends",
+                                value: vm.selectedFriendsLabel,
+                                isPlaceholder: vm.selectedMemberIds.isEmpty,
+                                trailingChevron: true
+                            )
+                        }
+                        .buttonStyle(.plain)
                     }
 
                     if let message = vm.errorMessage {
@@ -99,6 +111,17 @@ struct AddGroupView: View {
         .keyboardDismissToolbar()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+        .task { await vm.loadFriends() }
+        .sheet(isPresented: $showFriendsPicker) {
+            FriendsMultiPickerSheet(
+                title: "Add Friends",
+                confirmTitle: "Done",
+                initialSelection: vm.selectedMemberIds
+            ) { picked in
+                vm.selectedMemberIds = picked
+            }
+            .presentationDetents([.large])
+        }
     }
 
     private var navBar: some View {

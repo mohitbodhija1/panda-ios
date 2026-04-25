@@ -9,6 +9,7 @@
 import SwiftUI
 
 struct GroupSettingsSheet: View {
+    var onInviteMembers: (() -> Void)? = nil
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding: Bool = false
     @Environment(AuthSession.self) private var session
     @Environment(\.dismiss) private var dismiss
@@ -26,7 +27,10 @@ struct GroupSettingsSheet: View {
                 .padding(.top, 4)
 
             VStack(spacing: 10) {
-                settingsRow(icon: "person.crop.circle.badge.plus", title: "Invite Members", tint: AppColor.pandaBlue) {}
+                settingsRow(icon: "person.crop.circle.badge.plus", title: "Invite Members", tint: AppColor.pandaBlue) {
+                    dismiss()
+                    onInviteMembers?()
+                }
                 settingsRow(icon: "pencil", title: "Edit Group", tint: AppColor.textPrimary) {}
                 settingsRow(icon: "bell.slash.fill", title: "Mute Notifications", tint: AppColor.textPrimary) {}
             }

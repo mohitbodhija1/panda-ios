@@ -98,8 +98,8 @@ final class FriendsService {
                 id: req.userId,
                 username: req.username,
                 fullName: req.fullName,
-                email: nil,
-                phone: nil,
+                email: req.email,
+                phone: req.phone,
                 avatarUrl: req.avatarUrl,
                 defaultCurrency: req.defaultCurrency,
                 locale: "en_US",
@@ -122,6 +122,21 @@ final class FriendsService {
             .execute()
             .value
         return claimed
+    }
+
+    /// Date-ordered ledger of every expense + settlement between the current
+    /// user and `friendId`, across all groups and 1-to-1 expenses. Powered by
+    /// `rpc_friend_ledger` (SECURITY DEFINER).
+    func ledger(with friendId: UUID, limit: Int = 100) async throws -> [FriendLedgerEntryDTO] {
+        struct Args: Encodable {
+            let p_other: UUID
+            let p_limit: Int
+        }
+        return try await db
+            .rpc("rpc_friend_ledger",
+                 params: Args(p_other: friendId, p_limit: limit))
+            .execute()
+            .value
     }
 
     func invite(channel: FriendInviteChannel, target: String) async throws {

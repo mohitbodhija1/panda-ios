@@ -149,7 +149,7 @@ final class AddExpenseViewModel {
             let rows = (acc + pen).map {
                 FriendRowItem(
                     id: $0.profile.id,
-                    name: $0.profile.fullName ?? $0.profile.username ?? "Friend",
+                    name: $0.profile.displayName,
                     avatarTint: AppColor.tint(for: $0.profile.id),
                     balance: $0.netOwed,
                     currency: $0.profile.defaultCurrency,

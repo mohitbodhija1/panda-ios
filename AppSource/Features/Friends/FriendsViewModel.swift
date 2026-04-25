@@ -117,11 +117,11 @@ final class FriendsViewModel {
 
         do {
             _ = try await service.accept(friend.id)
-            // Move the row optimistically into the accepted list.
             incomingRequests.removeAll { $0.id == friend.id }
             var promoted = friend
             promoted.isPending = false
             friends.append(promoted)
+            await load()
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
         }
@@ -145,7 +145,7 @@ final class FriendsViewModel {
     private static func makeRow(_ f: FriendWithBalance) -> FriendRowItem {
         FriendRowItem(
             id: f.profile.id,
-            name: f.profile.fullName ?? f.profile.username ?? "Friend",
+            name: f.profile.displayName,
             avatarTint: AppColor.tint(for: f.profile.id),
             balance: f.netOwed,
             currency: f.profile.defaultCurrency,

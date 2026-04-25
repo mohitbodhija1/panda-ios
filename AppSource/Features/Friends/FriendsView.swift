@@ -64,6 +64,8 @@ struct FriendsView: View {
                 AddFriendView()
             case .addExpense(let friend):
                 AddExpenseView(preselectedFriend: friend)
+            case .history(let friend):
+                FriendHistoryView(friend: friend)
             }
         }
     }
@@ -91,7 +93,7 @@ struct FriendsView: View {
                 emptyCard("You haven't added any friends yet. Invite someone to get started.")
             } else {
                 ForEach(vm.filteredFriendsForMainList) { friend in
-                    NavigationLink(value: FriendsRoute.addExpense(friend)) {
+                    NavigationLink(value: friendDestination(for: friend)) {
                         FriendRow(friend: friend)
                     }
                     .buttonStyle(.plain)
@@ -178,6 +180,13 @@ struct FriendsView: View {
             .buttonStyle(.plain)
         }
         .padding(.top, 4)
+    }
+
+    /// Accepted friends route to their transaction history; pending outgoing
+    /// invites have no history yet, so they keep the legacy "tap to add an
+    /// expense" affordance (the row subtitle already advertises this).
+    private func friendDestination(for friend: FriendRowItem) -> FriendsRoute {
+        friend.isPending ? .addExpense(friend) : .history(friend)
     }
 
     private func emptyCard(_ text: String) -> some View {

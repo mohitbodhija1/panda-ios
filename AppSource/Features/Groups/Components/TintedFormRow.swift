@@ -104,7 +104,7 @@ struct TintedFormRowField: View {
                     }
                 }
                 .font(AppFont.bodyRegular)
-                .foregroundStyle(Color.primary)
+                .foregroundStyle(AppColor.textPrimary)
             }
 
             Spacer(minLength: 8)
