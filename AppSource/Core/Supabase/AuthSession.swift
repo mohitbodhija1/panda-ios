@@ -54,7 +54,20 @@ final class AuthSession {
             password: password,
             data: ["full_name": .string(fullName)]
         )
-        user = response.user
+
+        // If the project has email confirmation disabled, signUp returns a
+        // session and the auth-state listener will populate `user`. If it
+        // returns only a user (confirmation pending), try to sign in
+        // immediately so the user lands inside the app without a round-trip
+        // through their inbox. This succeeds the moment the dashboard flag
+        // is off and surfaces a clean error otherwise.
+        if let session = response.session {
+            user = session.user
+            return
+        }
+
+        let session = try await SupabaseProvider.auth.signIn(email: email, password: password)
+        user = session.user
     }
 
     func signOut() async {

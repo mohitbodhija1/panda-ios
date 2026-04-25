@@ -102,7 +102,20 @@ func application(_ application: UIApplication,
 
 The `notify_on_expense` / `notify_on_settlement` Edge Functions look these up.
 
-## 5. Local development
+## 5. Disable email confirmation on the hosted project
+
+`supabase db push` only deploys SQL migrations, **not** the `[auth]` block in
+`supabase/config.toml`. The local stack already runs with
+`enable_confirmations = false`, but the hosted project keeps its own copy of
+that flag. After provisioning a new project, go to
+**Authentication → Sign In / Providers → Email** in the Supabase dashboard
+and turn **Confirm email** OFF (and, if you want passwordless flows
+disabled, untick the magic-link option). Without this flip, `signUp` returns
+a `User` with no `Session` and the app's `signIn` fallback in
+`[AppSource/Core/Supabase/AuthSession.swift](AppSource/Core/Supabase/AuthSession.swift)`
+will surface an "Email not confirmed" error.
+
+## 6. Local development
 
 ```bash
 cd ../supabase

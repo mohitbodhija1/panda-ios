@@ -54,6 +54,11 @@ final class FriendsViewModel {
         errorMessage = nil
         defer { isLoading = false }
 
+        // Defensive: materialise any leftover friend_invites targeting our
+        // email/phone into pending friendships before we read. Idempotent;
+        // failures are non-fatal because the auth trigger usually handled it.
+        try? await service.claimMyFriendInvites()
+
         do {
             guard let me = await SupabaseProvider.currentUserId() else {
                 throw AppError.notAuthenticated
@@ -62,31 +67,33 @@ final class FriendsViewModel {
             async let acceptedRel = service.friendsWithBalances(status: .accepted)
             async let pendingRel  = service.friendsWithBalances(status: .pending)
             async let pendingRows = service.friendships(status: .pending)
+            async let incomingRel = service.incomingFriendRequests()
             async let invites     = service.pendingInvites()
-            let (accepted, pendingFriends, pendingFriendships, outOfBand) =
-                try await (acceptedRel, pendingRel, pendingRows, invites)
+            let (accepted, pendingFriends, pendingFriendships, incomingReceived, outOfBand) =
+                try await (acceptedRel, pendingRel, pendingRows, incomingRel, invites)
 
-            // Map (counterpart_id → requested_by) so we can split direction.
-            let requestedByByCounterpart: [UUID: UUID] = Dictionary(
-                uniqueKeysWithValues: pendingFriendships.map {
-                    ($0.counterparty(of: me), $0.requestedBy)
-                }
+            // Set of counterpart ids the *current user* requested → drives the
+            // outgoing/"Invited" bucket. Built from pendingFriendships because
+            // it carries the direction (`requested_by`).
+            let outgoingCounterpartIds: Set<UUID> = Set(
+                pendingFriendships
+                    .filter { $0.requestedBy == me }
+                    .map { $0.counterparty(of: me) }
             )
 
             friends = accepted.map(Self.makeRow)
 
-            var incoming: [FriendRowItem] = []
-            var outgoing: [FriendRowItem] = []
-            for f in pendingFriends {
-                let row = Self.makeRow(f)
-                if requestedByByCounterpart[f.profile.id] == me {
-                    outgoing.append(row)
-                } else {
-                    incoming.append(row)
-                }
-            }
-            incomingRequests = incoming
-            outgoingInvites  = outgoing
+            // Incoming requests come exclusively from the SECURITY DEFINER RPC
+            // so a missing profiles RLS grant cannot silently empty the list.
+            incomingRequests = incomingReceived.map(Self.makeRow)
+
+            // Outgoing invites still come from the regular pending path; the
+            // inviter can always read the invitee's profile (they share a
+            // pending friendships row) so the silent-drop hazard does not apply.
+            outgoingInvites  = pendingFriends
+                .filter { outgoingCounterpartIds.contains($0.profile.id) }
+                .map(Self.makeRow)
+
             pendingInvites   = outOfBand.compactMap(Self.makeInviteRow)
         } catch {
             errorMessage = AppError.wrap(error).errorDescription

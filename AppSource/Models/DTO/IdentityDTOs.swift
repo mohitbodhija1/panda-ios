@@ -59,6 +59,32 @@ enum FriendInviteChannel: String, Codable, Hashable {
     case email, phone
 }
 
+/// Pending friend request the current user has *received*. Returned by the
+/// `rpc_friend_requests_received` RPC, which joins `friendships` to the
+/// inviter's `profiles` row in a single SECURITY DEFINER trip so the
+/// recipient is never blocked by RLS gaps on the profiles table.
+struct FriendRequestDTO: Codable, Hashable, Identifiable {
+    let userId: UUID
+    let fullName: String?
+    let username: String?
+    let avatarUrl: String?
+    let defaultCurrency: String
+    let requestedBy: UUID
+    let createdAt: Date?
+
+    var id: UUID { userId }
+
+    enum CodingKeys: String, CodingKey {
+        case username
+        case userId = "user_id"
+        case fullName = "full_name"
+        case avatarUrl = "avatar_url"
+        case defaultCurrency = "default_currency"
+        case requestedBy = "requested_by"
+        case createdAt = "created_at"
+    }
+}
+
 struct FriendInviteDTO: Codable, Identifiable, Hashable {
     let id: UUID
     let inviterId: UUID

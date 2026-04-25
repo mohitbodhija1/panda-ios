@@ -83,6 +83,47 @@ final class FriendsService {
         }
     }
 
+    /// Pending friend requests where the current user is the recipient.
+    /// Routed through `rpc_friend_requests_received` (SECURITY DEFINER) so a
+    /// missing `profiles_pending_friend_read` grant cannot silently empty the
+    /// recipient's "Friend Requests" list.
+    func incomingFriendRequests() async throws -> [FriendWithBalance] {
+        let rows: [FriendRequestDTO] = try await db
+            .rpc("rpc_friend_requests_received")
+            .execute()
+            .value
+
+        return rows.map { req in
+            let profile = ProfileDTO(
+                id: req.userId,
+                username: req.username,
+                fullName: req.fullName,
+                email: nil,
+                phone: nil,
+                avatarUrl: req.avatarUrl,
+                defaultCurrency: req.defaultCurrency,
+                locale: "en_US",
+                createdAt: req.createdAt,
+                updatedAt: nil
+            )
+            return FriendWithBalance(profile: profile, netOwed: 0, status: .pending)
+        }
+    }
+
+    /// Defensive sweep: ask the server to materialise any pending
+    /// `friend_invites` targeting our email/phone into pending friendships.
+    /// Idempotent; safe to call on every Friends-tab load. Catches cases
+    /// where the `link_pending_friend_invites` auth trigger did not fire
+    /// (OAuth signups, late invites, etc.).
+    @discardableResult
+    func claimMyFriendInvites() async throws -> Int {
+        let claimed: Int = try await db
+            .rpc("rpc_claim_friend_invites")
+            .execute()
+            .value
+        return claimed
+    }
+
     func invite(channel: FriendInviteChannel, target: String) async throws {
         struct Args: Encodable { let channel: String; let target: String }
         try await db.rpc("rpc_invite_friend", params: Args(channel: channel.rawValue, target: target)).execute()
