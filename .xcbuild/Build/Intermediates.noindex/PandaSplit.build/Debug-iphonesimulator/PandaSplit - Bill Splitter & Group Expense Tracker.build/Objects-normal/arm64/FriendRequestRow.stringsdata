@@ -1,0 +1,40 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Friends/Components/FriendRequestRow.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Wants to be your friend",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 34
+        }
+      },
+      {
+        "comment": "",
+        "key": "Decline",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 44
+        }
+      },
+      {
+        "comment": "",
+        "key": "…",
+        "location": {
+          "startingColumn": 35,
+          "startingLine": 62
+        }
+      },
+      {
+        "comment": "",
+        "key": "Accept",
+        "location": {
+          "startingColumn": 43,
+          "startingLine": 62
+        }
+      }
+    ]
+  },
+  "version": 1
+}

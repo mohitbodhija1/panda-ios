@@ -1,0 +1,24 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Groups/GroupsListView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "You haven't created or been added to any groups yet.\nTap + to create your first group.",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 82
+        }
+      },
+      {
+        "comment": "",
+        "key": "Groups",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 65
+        }
+      }
+    ]
+  },
+  "version": 1
+}

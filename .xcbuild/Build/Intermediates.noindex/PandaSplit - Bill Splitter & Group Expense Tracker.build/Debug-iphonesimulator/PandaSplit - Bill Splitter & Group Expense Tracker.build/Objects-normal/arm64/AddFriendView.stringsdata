@@ -1,0 +1,24 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Features/Friends/AddFriendView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Invite a friend to start splitting\nexpenses together.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Friend",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 113
+        }
+      }
+    ]
+  },
+  "version": 1
+}

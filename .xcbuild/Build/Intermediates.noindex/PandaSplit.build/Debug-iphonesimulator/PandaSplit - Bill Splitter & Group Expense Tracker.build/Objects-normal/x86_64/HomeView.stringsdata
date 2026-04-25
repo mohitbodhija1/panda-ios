@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Home/HomeView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Panda",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 126
+        }
+      }
+    ]
+  },
+  "version": 1
+}

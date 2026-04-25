@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Friends/Components/FriendRow.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Pending",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 66
+        }
+      }
+    ]
+  },
+  "version": 1
+}

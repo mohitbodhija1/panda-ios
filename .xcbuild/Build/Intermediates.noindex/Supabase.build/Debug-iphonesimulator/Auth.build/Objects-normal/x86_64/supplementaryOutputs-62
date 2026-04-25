@@ -1,0 +1,30 @@
+{
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/Constants.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Constants.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Constants.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Constants.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Constants.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Constants.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/Dependencies.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Dependencies.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Dependencies.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Dependencies.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Dependencies.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/Dependencies.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/EventEmitter.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/EventEmitter.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/EventEmitter.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/EventEmitter.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/EventEmitter.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/EventEmitter.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Auth/Internal/FixedWidthInteger+Random.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/FixedWidthInteger+Random.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/FixedWidthInteger+Random.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/FixedWidthInteger+Random.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/FixedWidthInteger+Random.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Auth.build/Objects-normal/x86_64/FixedWidthInteger+Random.swiftdeps"
+  }
+}

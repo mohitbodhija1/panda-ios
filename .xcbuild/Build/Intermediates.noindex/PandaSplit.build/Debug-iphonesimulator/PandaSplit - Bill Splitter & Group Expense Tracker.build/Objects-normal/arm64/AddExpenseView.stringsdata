@@ -1,0 +1,48 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Groups/AddExpenseView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Choose a group",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 139
+        }
+      },
+      {
+        "comment": "",
+        "key": "Choose a friend",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 145
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 151
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Expense",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 258
+        }
+      }
+    ]
+  },
+  "version": 1
+}

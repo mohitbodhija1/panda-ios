@@ -1,0 +1,23 @@
+{
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Helpers/HTTP/LoggerInterceptor.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/LoggerInterceptor.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/LoggerInterceptor.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/LoggerInterceptor.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/LoggerInterceptor.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/LoggerInterceptor.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Helpers/HTTP/RetryRequestInterceptor.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/RetryRequestInterceptor.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/RetryRequestInterceptor.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/RetryRequestInterceptor.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/RetryRequestInterceptor.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/RetryRequestInterceptor.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/SourcePackages/checkouts/supabase-swift/Sources/Helpers/JWT.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/JWT.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/JWT.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/JWT.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/JWT.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/Supabase.build/Debug-iphonesimulator/Helpers.build/Objects-normal/x86_64/JWT.swiftdeps"
+  }
+}

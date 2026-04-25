@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Paywall/Components/PricingCard.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Best Value",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 43
+        }
+      }
+    ]
+  },
+  "version": 1
+}

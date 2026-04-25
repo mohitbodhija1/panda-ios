@@ -1,0 +1,40 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Onboarding/Pages/FriendsPage.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Add your friends and split\nexpenses one-on-one.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "friends",
+        "location": {
+          "startingColumn": 33,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Split with %@",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Skip for now",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 63
+        }
+      }
+    ]
+  },
+  "version": 1
+}

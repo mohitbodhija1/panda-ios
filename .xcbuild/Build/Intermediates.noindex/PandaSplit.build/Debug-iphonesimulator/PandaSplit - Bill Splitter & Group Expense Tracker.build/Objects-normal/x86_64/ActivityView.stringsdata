@@ -1,0 +1,24 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Activity/ActivityView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Activity",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 19
+        }
+      },
+      {
+        "comment": "",
+        "key": "Nothing's happened yet. Once expenses, settlements, or group changes occur they'll show up here.",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 82
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,23 @@
+{
+  "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/App/RootView.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RootView.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RootView.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RootView.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RootView.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RootView.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Core/Display/RowItems.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RowItems.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RowItems.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RowItems.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RowItems.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/RowItems.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Core/Theme/AppColor.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/AppColor.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/AppColor.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/AppColor.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/AppColor.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit - Bill Splitter & Group Expense Tracker.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/x86_64/AppColor.swiftdeps"
+  }
+}

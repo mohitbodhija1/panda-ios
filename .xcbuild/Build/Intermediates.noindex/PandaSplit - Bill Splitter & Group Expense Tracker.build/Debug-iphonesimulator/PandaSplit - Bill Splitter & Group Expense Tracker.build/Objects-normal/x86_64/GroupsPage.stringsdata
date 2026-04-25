@@ -1,0 +1,40 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Features/Onboarding/Pages/GroupsPage.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Create groups for trips, flatmates,\nevents, and more.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 26
+        }
+      },
+      {
+        "comment": "",
+        "key": "groups",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 77
+        }
+      },
+      {
+        "comment": "",
+        "key": "Split in %@",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 77
+        }
+      },
+      {
+        "comment": "",
+        "key": "Skip for now",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 64
+        }
+      }
+    ]
+  },
+  "version": 1
+}

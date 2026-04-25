@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Core/Extensions/View+dismissKeyboard.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 32
+        }
+      }
+    ]
+  },
+  "version": 1
+}

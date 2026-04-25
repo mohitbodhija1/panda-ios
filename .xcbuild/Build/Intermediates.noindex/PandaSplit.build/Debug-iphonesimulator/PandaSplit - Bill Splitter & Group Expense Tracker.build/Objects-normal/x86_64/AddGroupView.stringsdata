@@ -1,0 +1,24 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Groups/AddGroupView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Create a group for trips, flatmates,\nevents, and more.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 22
+        }
+      },
+      {
+        "comment": "",
+        "key": "Create Group",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 141
+        }
+      }
+    ]
+  },
+  "version": 1
+}

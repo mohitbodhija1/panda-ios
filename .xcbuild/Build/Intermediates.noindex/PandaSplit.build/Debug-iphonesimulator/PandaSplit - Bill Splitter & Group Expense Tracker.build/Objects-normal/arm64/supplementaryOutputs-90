@@ -1,0 +1,86 @@
+{
+  "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GeneratedAssetSymbols.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Models/DTO/IdentityDTOs.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/IdentityDTOs.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/IdentityDTOs.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/IdentityDTOs.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/IdentityDTOs.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/IdentityDTOs.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Models/DTO/MoneyDTOs.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/MoneyDTOs.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/MoneyDTOs.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/MoneyDTOs.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/MoneyDTOs.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/MoneyDTOs.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/PandaSplit___Bill_Splitter___Group_Expense_TrackerApp.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/PandaSplit___Bill_Splitter___Group_Expense_TrackerApp.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/PandaSplit___Bill_Splitter___Group_Expense_TrackerApp.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/PandaSplit___Bill_Splitter___Group_Expense_TrackerApp.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/PandaSplit___Bill_Splitter___Group_Expense_TrackerApp.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/PandaSplit___Bill_Splitter___Group_Expense_TrackerApp.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/ActivityService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ActivityService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ActivityService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ActivityService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ActivityService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ActivityService.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/CurrenciesService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/CurrenciesService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/CurrenciesService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/CurrenciesService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/CurrenciesService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/CurrenciesService.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/ExpensesService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ExpensesService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ExpensesService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ExpensesService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ExpensesService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ExpensesService.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/FriendsService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/FriendsService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/FriendsService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/FriendsService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/FriendsService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/FriendsService.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/GroupsService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GroupsService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GroupsService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GroupsService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GroupsService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/GroupsService.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/NotificationsService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/NotificationsService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/NotificationsService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/NotificationsService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/NotificationsService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/NotificationsService.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/ProfilesService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ProfilesService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ProfilesService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ProfilesService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ProfilesService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/ProfilesService.swiftdeps"
+  },
+  "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Services/SettlementsService.swift" : {
+    "const-values" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/SettlementsService.swiftconstvalues",
+    "dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/SettlementsService.d",
+    "diagnostics" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/SettlementsService.dia",
+    "object" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/SettlementsService.o",
+    "swift-dependencies" : "/Users/mohitbodhija/Desktop/ios/panda2/.xcbuild/Build/Intermediates.noindex/PandaSplit.build/Debug-iphonesimulator/PandaSplit - Bill Splitter & Group Expense Tracker.build/Objects-normal/arm64/SettlementsService.swiftdeps"
+  }
+}

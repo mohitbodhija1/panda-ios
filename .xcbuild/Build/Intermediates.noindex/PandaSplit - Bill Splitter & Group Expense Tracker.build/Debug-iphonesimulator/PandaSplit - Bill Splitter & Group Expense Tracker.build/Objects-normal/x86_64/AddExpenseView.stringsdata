@@ -1,0 +1,40 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Features/Groups/AddExpenseView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Choose a group",
+        "location": {
+          "startingColumn": 29,
+          "startingLine": 122
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add expense details and split\nequally with the group.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 33
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 20,
+          "startingLine": 126
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Expense",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 150
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,24 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Home/Components/HomeHeroCard.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Hi, %@ 👋",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 22
+        }
+      },
+      {
+        "comment": "",
+        "key": "Here's what's happening\nwith your expenses.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 25
+        }
+      }
+    ]
+  },
+  "version": 1
+}

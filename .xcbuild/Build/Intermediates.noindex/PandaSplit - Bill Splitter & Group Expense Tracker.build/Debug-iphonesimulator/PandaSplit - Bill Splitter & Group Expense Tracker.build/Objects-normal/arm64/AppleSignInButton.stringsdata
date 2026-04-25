@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/PandaSplit - Bill Splitter & Group Expense Tracker/PandaSplit - Bill Splitter & Group Expense Tracker/Features/Auth/Components/AppleSignInButton.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Continue with Apple",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 19
+        }
+      }
+    ]
+  },
+  "version": 1
+}

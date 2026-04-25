@@ -1,0 +1,16 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Settings/Components/LegalDocumentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Last updated %@",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 38
+        }
+      }
+    ]
+  },
+  "version": 1
+}
