@@ -16,6 +16,13 @@ struct FriendHistoryView: View {
 
     @State private var vm: FriendHistoryViewModel
     @State private var showAddExpense: Bool = false
+    /// Active expense being edited from a tapped ledger row. Settlements
+    /// are not editable — only entries with `kind == .expense` populate
+    /// this binding.
+    @State private var editingExpense: ExpenseDTO?
+    /// Per-row busy flag while we fetch the full `ExpenseDTO` from the
+    /// row's `entryId`, so the user gets feedback on tap.
+    @State private var loadingExpenseId: UUID?
     @Environment(\.dismiss) private var dismiss
 
     init(friend: FriendRowItem) {
@@ -74,6 +81,28 @@ struct FriendHistoryView: View {
             Task { await vm.load() }
         }) {
             AddExpenseView(preselectedFriend: friend)
+        }
+        .fullScreenCover(item: $editingExpense, onDismiss: {
+            Task { await vm.load() }
+        }) { expense in
+            AddExpenseView(editingExpense: expense, friendHint: friend)
+        }
+    }
+
+    /// Resolves the full `ExpenseDTO` for a tapped ledger row and presents
+    /// the editor. Settlement rows are silently ignored.
+    private func openEditor(for entry: FriendLedgerEntryDTO) {
+        guard entry.kind == .expense else { return }
+        guard loadingExpenseId == nil else { return }
+        loadingExpenseId = entry.id
+        Task {
+            defer { loadingExpenseId = nil }
+            do {
+                let dto = try await ExpensesService.shared.fetch(id: entry.id)
+                editingExpense = dto
+            } catch {
+                vm.errorMessage = AppError.wrap(error).errorDescription
+            }
         }
     }
 
@@ -188,7 +217,17 @@ struct FriendHistoryView: View {
     private var ledger: some View {
         VStack(spacing: 10) {
             ForEach(vm.entries) { row in
-                FriendLedgerRow(entry: row, friendName: friend.name)
+                Button {
+                    openEditor(for: row)
+                } label: {
+                    FriendLedgerRow(
+                        entry: row,
+                        friendName: friend.name,
+                        isLoading: loadingExpenseId == row.id
+                    )
+                }
+                .buttonStyle(.plain)
+                .disabled(row.kind != .expense)
             }
         }
     }
@@ -221,6 +260,9 @@ struct FriendHistoryView: View {
 private struct FriendLedgerRow: View {
     let entry: FriendLedgerEntryDTO
     let friendName: String
+    /// Optional spinner shown over the trailing amount block while we
+    /// resolve the full ExpenseDTO before opening the editor.
+    var isLoading: Bool = false
 
     var body: some View {
         HStack(spacing: 14) {
@@ -243,13 +285,18 @@ private struct FriendLedgerRow: View {
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text(deltaText)
-                    .font(AppFont.amountSmall)
-                    .foregroundStyle(deltaColor)
-                Text(entry.amount.currencyString(code: entry.currency))
-                    .font(.system(size: 11))
-                    .foregroundStyle(AppColor.textSecondary)
+            if isLoading {
+                ProgressView()
+                    .tint(AppColor.pandaBlue)
+            } else {
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text(deltaText)
+                        .font(AppFont.amountSmall)
+                        .foregroundStyle(deltaColor)
+                    Text(entry.amount.currencyString(code: entry.currency))
+                        .font(.system(size: 11))
+                        .foregroundStyle(AppColor.textSecondary)
+                }
             }
         }
         .padding(.horizontal, 16)

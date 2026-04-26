@@ -7,15 +7,7 @@
         "key": "Sign out of PandaSplit?",
         "location": {
           "startingColumn": 13,
-          "startingLine": 109
-        }
-      },
-      {
-        "comment": "",
-        "key": "Delete your PandaSplit account?",
-        "location": {
-          "startingColumn": 13,
-          "startingLine": 124
+          "startingLine": 145
         }
       },
       {
@@ -23,7 +15,7 @@
         "key": "Pick defaults that apply to every new group\nand expense you create.",
         "location": {
           "startingColumn": 30,
-          "startingLine": 45
+          "startingLine": 59
         }
       },
       {
@@ -31,7 +23,7 @@
         "key": "Saving…",
         "location": {
           "startingColumn": 34,
-          "startingLine": 65
+          "startingLine": 79
         }
       },
       {
@@ -39,7 +31,7 @@
         "key": "Sign Out",
         "location": {
           "startingColumn": 20,
-          "startingLine": 113
+          "startingLine": 149
         }
       },
       {
@@ -47,7 +39,7 @@
         "key": "Cancel",
         "location": {
           "startingColumn": 20,
-          "startingLine": 119
+          "startingLine": 155
         }
       },
       {
@@ -55,47 +47,7 @@
         "key": "You'll need to sign in again to access your groups and expenses.",
         "location": {
           "startingColumn": 18,
-          "startingLine": 121
-        }
-      },
-      {
-        "comment": "",
-        "key": "Delete Account",
-        "location": {
-          "startingColumn": 20,
-          "startingLine": 128
-        }
-      },
-      {
-        "comment": "",
-        "key": "Cancel",
-        "location": {
-          "startingColumn": 20,
-          "startingLine": 141
-        }
-      },
-      {
-        "comment": "",
-        "key": "This permanently removes your account. You cannot undo this.",
-        "location": {
-          "startingColumn": 18,
-          "startingLine": 143
-        }
-      },
-      {
-        "comment": "",
-        "key": "Deleting…",
-        "location": {
-          "startingColumn": 42,
-          "startingLine": 203
-        }
-      },
-      {
-        "comment": "",
-        "key": "Delete Account",
-        "location": {
-          "startingColumn": 58,
-          "startingLine": 203
+          "startingLine": 157
         }
       },
       {
@@ -103,7 +55,7 @@
         "key": "Sign Out",
         "location": {
           "startingColumn": 22,
-          "startingLine": 231
+          "startingLine": 380
         }
       },
       {
@@ -111,7 +63,7 @@
         "key": "Settings",
         "location": {
           "startingColumn": 18,
-          "startingLine": 272
+          "startingLine": 421
         }
       }
     ]

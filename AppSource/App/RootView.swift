@@ -29,6 +29,14 @@ struct RootView: View {
         .environment(session)
         .animation(.easeInOut, value: hasCompletedOnboarding)
         .animation(.easeInOut, value: session.isAuthenticated)
+        // Trigger the APNs handshake every time we transition into an
+        // authenticated state. Idempotent: skipped when the user is not
+        // signed in, and a no-op (aside from token refresh) once
+        // permission has already been granted.
+        .task(id: session.isAuthenticated) {
+            guard session.isAuthenticated else { return }
+            await PushManager.ensurePermissionAndRegister()
+        }
     }
 
     private var loadingScreen: some View {

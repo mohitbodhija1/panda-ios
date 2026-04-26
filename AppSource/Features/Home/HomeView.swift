@@ -6,6 +6,10 @@
 import SwiftUI
 
 struct HomeView: View {
+    /// Cap the Recent Activity preview shown on Home. Users can open the
+    /// Activity tab for the full feed.
+    static let recentActivityLimit: Int = 5
+
     @State private var vm = HomeViewModel()
     @State private var showPaywall: Bool = false
     @State private var showSettings: Bool = false
@@ -38,7 +42,10 @@ struct HomeView: View {
                         } else if vm.recentActivity.isEmpty {
                             emptyCard("No activity yet. Create a group or add an expense to get started.")
                         } else {
-                            ForEach(vm.recentActivity) { item in
+                            // Landing page surfaces only the most recent
+                            // activity items. Older entries live in the
+                            // dedicated Activity tab.
+                            ForEach(Array(vm.recentActivity.prefix(HomeView.recentActivityLimit))) { item in
                                 Button {
                                     if let dest = destination(for: item) {
                                         activityDestination = dest
@@ -59,7 +66,14 @@ struct HomeView: View {
                         } else if vm.groups.isEmpty {
                             emptyCard("You aren't in any groups yet.")
                         } else {
-                            ForEach(vm.groups.prefix(1)) { HomeGroupRow(group: $0) }
+                            ForEach(vm.groups.prefix(1)) { group in
+                                Button {
+                                    activityDestination = .group(group)
+                                } label: {
+                                    HomeGroupRow(group: group)
+                                }
+                                .buttonStyle(.plain)
+                            }
                         }
                     }
 

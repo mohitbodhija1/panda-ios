@@ -4,6 +4,8 @@
 <dict>
 	<key>application-identifier</key>
 	<string>KFYZTB84NM.bodhija.PandaSplit---Bill-Splitter---Group-Expense-Tracker</string>
+	<key>aps-environment</key>
+	<string>development</string>
 	<key>com.apple.developer.applesignin</key>
 	<array>
 		<string>Default</string>

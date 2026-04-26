@@ -2,8 +2,19 @@
 -- directly into FriendHistoryView when a friendship-pair activity row is
 -- tapped. NULL for group rows; for friendship rows it is the OTHER side
 -- of the pair from `user_id`.
+--
+-- We DROP + CREATE (instead of CREATE OR REPLACE) because Postgres only
+-- allows replacing a view when the new column list keeps every existing
+-- column in its original ordinal position — appending is fine, but
+-- inserting `counterparty_id` *before* `payload` reshuffles ordinals and
+-- triggers SQLSTATE 42P16:
+--   "cannot change name of view column \"payload\" to \"counterparty_id\""
+-- The view has no DB-side dependents (only PostgREST clients select from
+-- it), so dropping is safe.
 
-create or replace view public.v_recent_activity as
+drop view if exists public.v_recent_activity;
+
+create view public.v_recent_activity as
 select
     a.id,
     m.user_id,

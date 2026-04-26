@@ -48,7 +48,7 @@ final class GroupsService {
     }
 
     func myBalanceAcrossGroups() async throws -> [GroupBalanceDTO] {
-        guard let userId = try? await SupabaseProvider.auth.user().id else { throw AppError.notAuthenticated }
+        guard let userId = await SupabaseProvider.currentUserId() else { throw AppError.notAuthenticated }
         return try await db.from("v_user_group_balance")
             .select()
             .eq("user_id", value: userId)
@@ -103,11 +103,38 @@ final class GroupsService {
     }
 
     func leave(groupId: UUID) async throws {
-        guard let me = try? await SupabaseProvider.auth.user().id else { throw AppError.notAuthenticated }
+        guard let me = await SupabaseProvider.currentUserId() else { throw AppError.notAuthenticated }
         try await db.from("group_members")
             .delete()
             .eq("group_id", value: groupId)
             .eq("user_id", value: me)
+            .execute()
+    }
+
+    /// Owner-only: rename a group. Trusts RLS policy `groups_owner_update`
+    /// to reject the call when the caller isn't the owner. Returns the
+    /// fresh row so the client can pick up the new `updated_at`.
+    @discardableResult
+    func rename(groupId: UUID, to newName: String) async throws -> GroupDTO {
+        struct Patch: Encodable { let name: String }
+        return try await db.from("groups")
+            .update(Patch(name: newName))
+            .eq("id", value: groupId)
+            .select()
+            .single()
+            .execute()
+            .value
+    }
+
+    /// Owner-only: remove another member from a group. The RLS policy
+    /// `group_members_self_or_owner_delete` also allows a member to delete
+    /// their own row — for that case prefer `leave(groupId:)` so intent is
+    /// explicit at the call site.
+    func removeMember(groupId: UUID, userId: UUID) async throws {
+        try await db.from("group_members")
+            .delete()
+            .eq("group_id", value: groupId)
+            .eq("user_id", value: userId)
             .execute()
     }
 

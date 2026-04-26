@@ -7,7 +7,7 @@
         "key": "Choose a group",
         "location": {
           "startingColumn": 29,
-          "startingLine": 139
+          "startingLine": 152
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "Choose a friend",
         "location": {
           "startingColumn": 29,
-          "startingLine": 145
+          "startingLine": 158
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "Cancel",
         "location": {
           "startingColumn": 20,
-          "startingLine": 143
+          "startingLine": 156
         }
       },
       {
@@ -31,15 +31,7 @@
         "key": "Cancel",
         "location": {
           "startingColumn": 20,
-          "startingLine": 151
-        }
-      },
-      {
-        "comment": "",
-        "key": "Add Expense",
-        "location": {
-          "startingColumn": 18,
-          "startingLine": 258
+          "startingLine": 164
         }
       }
     ]

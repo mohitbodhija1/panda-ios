@@ -1,0 +1,32 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Settings/AccountView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Account",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 103
+        }
+      },
+      {
+        "comment": "",
+        "key": "Update how friends see you across\ngroups and activity.",
+        "location": {
+          "startingColumn": 26,
+          "startingLine": 25
+        }
+      },
+      {
+        "comment": "",
+        "key": "Saved",
+        "location": {
+          "startingColumn": 31,
+          "startingLine": 80
+        }
+      }
+    ]
+  },
+  "version": 1
+}

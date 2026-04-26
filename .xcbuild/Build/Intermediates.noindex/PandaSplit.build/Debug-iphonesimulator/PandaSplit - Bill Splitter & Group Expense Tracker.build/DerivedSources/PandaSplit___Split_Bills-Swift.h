@@ -346,6 +346,10 @@ extern "C" {
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
+@import Foundation;
+@import ObjectiveC;
+@import UIKit;
+@import UserNotifications;
 #endif
 
 #endif // defined(__OBJC__)
@@ -367,6 +371,30 @@ extern "C" {
 #endif
 
 #if defined(__OBJC__)
+
+@class UIApplication;
+@class NSData;
+@class UNUserNotificationCenter;
+@class UNNotification;
+/// UIApplicationDelegate driving the APNs handshake. We deliberately keep
+/// this class non-<code>@MainActor</code> because <code>UIApplicationDelegateAdaptor</code>
+/// instantiates it from non-isolated context. The methods themselves are
+/// invoked on the main thread by UIKit, and we hop into MainActor work
+/// via <code>Task</code> whenever we touch our <code>@MainActor</code> services.
+SWIFT_CLASS("_TtC24PandaSplit___Split_Bills15PushAppDelegate")
+@interface PushAppDelegate : NSObject <UIApplicationDelegate, UNUserNotificationCenterDelegate>
+- (BOOL)application:(UIApplication * _Nonnull)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> * _Nullable)launchOptions SWIFT_WARN_UNUSED_RESULT;
+/// APNs handed us a fresh device token. Forward it to Supabase so
+/// the <code>notify_on_*</code> Edge Functions and <code>send_test_push</code> can find
+/// this device.
+- (void)application:(UIApplication * _Nonnull)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData * _Nonnull)deviceToken;
+- (void)application:(UIApplication * _Nonnull)application didFailToRegisterForRemoteNotificationsWithError:(NSError * _Nonnull)error;
+/// Show banner + sound while the app is foregrounded so test pushes
+/// are visible during development. Production behaviour is governed
+/// by the same flags so users always see incoming pushes.
+- (void)userNotificationCenter:(UNUserNotificationCenter * _Nonnull)center willPresentNotification:(UNNotification * _Nonnull)notification withCompletionHandler:(void (^ _Nonnull)(UNNotificationPresentationOptions))completionHandler;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
 
 #endif // defined(__OBJC__)
 #if __has_attribute(external_source_symbol)
@@ -724,6 +752,10 @@ extern "C" {
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
+@import Foundation;
+@import ObjectiveC;
+@import UIKit;
+@import UserNotifications;
 #endif
 
 #endif // defined(__OBJC__)
@@ -745,6 +777,30 @@ extern "C" {
 #endif
 
 #if defined(__OBJC__)
+
+@class UIApplication;
+@class NSData;
+@class UNUserNotificationCenter;
+@class UNNotification;
+/// UIApplicationDelegate driving the APNs handshake. We deliberately keep
+/// this class non-<code>@MainActor</code> because <code>UIApplicationDelegateAdaptor</code>
+/// instantiates it from non-isolated context. The methods themselves are
+/// invoked on the main thread by UIKit, and we hop into MainActor work
+/// via <code>Task</code> whenever we touch our <code>@MainActor</code> services.
+SWIFT_CLASS("_TtC24PandaSplit___Split_Bills15PushAppDelegate")
+@interface PushAppDelegate : NSObject <UIApplicationDelegate, UNUserNotificationCenterDelegate>
+- (BOOL)application:(UIApplication * _Nonnull)application didFinishLaunchingWithOptions:(NSDictionary<UIApplicationLaunchOptionsKey, id> * _Nullable)launchOptions SWIFT_WARN_UNUSED_RESULT;
+/// APNs handed us a fresh device token. Forward it to Supabase so
+/// the <code>notify_on_*</code> Edge Functions and <code>send_test_push</code> can find
+/// this device.
+- (void)application:(UIApplication * _Nonnull)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData * _Nonnull)deviceToken;
+- (void)application:(UIApplication * _Nonnull)application didFailToRegisterForRemoteNotificationsWithError:(NSError * _Nonnull)error;
+/// Show banner + sound while the app is foregrounded so test pushes
+/// are visible during development. Production behaviour is governed
+/// by the same flags so users always see incoming pushes.
+- (void)userNotificationCenter:(UNUserNotificationCenter * _Nonnull)center willPresentNotification:(UNNotification * _Nonnull)notification withCompletionHandler:(void (^ _Nonnull)(UNNotificationPresentationOptions))completionHandler;
+- (nonnull instancetype)init OBJC_DESIGNATED_INITIALIZER;
+@end
 
 #endif // defined(__OBJC__)
 #if __has_attribute(external_source_symbol)

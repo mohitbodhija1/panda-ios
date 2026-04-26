@@ -12,6 +12,11 @@ struct GroupDetailView: View {
     @State private var segment: GroupSegment = .expenses
     @State private var showAddExpense: Bool = false
     @State private var showAddMembers: Bool = false
+    @State private var showEditGroup: Bool = false
+    /// Active expense being edited. Presented as a full-screen cover via
+    /// `.fullScreenCover(item:)` so a single binding drives both lifecycle
+    /// and dismissal.
+    @State private var editingExpense: ExpenseDTO?
     @Environment(\.dismiss) private var dismiss
 
     init(group: GroupRowItem) {
@@ -87,6 +92,11 @@ struct GroupDetailView: View {
         }) {
             AddExpenseView(preselectedGroup: group)
         }
+        .fullScreenCover(item: $editingExpense, onDismiss: {
+            Task { await vm.load() }
+        }) { expense in
+            AddExpenseView(editingExpense: expense, groupHint: group)
+        }
         .sheet(isPresented: $showAddMembers) {
             FriendsMultiPickerSheet(
                 title: "Add Members",
@@ -96,6 +106,13 @@ struct GroupDetailView: View {
                 Task { await vm.addMembers(friendIds: picked) }
             }
             .presentationDetents([.large])
+        }
+        .sheet(isPresented: $showEditGroup, onDismiss: {
+            // Re-pull membership / balances after edits so any rename or
+            // member changes propagate to the totals strip and member list.
+            Task { await vm.load() }
+        }) {
+            EditGroupSheet(vm: vm)
         }
     }
 
@@ -114,7 +131,7 @@ struct GroupDetailView: View {
             Spacer()
 
             VStack(spacing: 2) {
-                Text(group.name)
+                Text(vm.displayName)
                     .font(AppFont.navTitle)
                     .foregroundStyle(AppColor.textPrimary)
                 Text("\(memberCount) members")
@@ -124,7 +141,22 @@ struct GroupDetailView: View {
 
             Spacer()
 
-            Color.clear.frame(width: 40, height: 40)
+            // Owners get an Edit affordance to rename the group and curate
+            // its membership. Non-owners see an empty placeholder so the
+            // title stays centred.
+            if vm.isOwner {
+                Button { showEditGroup = true } label: {
+                    Image(systemName: "square.and.pencil")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(AppColor.textPrimary)
+                        .frame(width: 40, height: 40)
+                        .background(Circle().fill(Color.white))
+                        .overlay(Circle().stroke(AppColor.cardHairline, lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+            } else {
+                Color.clear.frame(width: 40, height: 40)
+            }
         }
     }
 
@@ -134,7 +166,16 @@ struct GroupDetailView: View {
 
     private var expensesList: some View {
         VStack(spacing: 10) {
-            ForEach(vm.expenses) { ExpenseRow(expense: $0) }
+            ForEach(vm.expenses) { row in
+                Button {
+                    if let dto = vm.expensesById[row.id] {
+                        editingExpense = dto
+                    }
+                } label: {
+                    ExpenseRow(expense: row)
+                }
+                .buttonStyle(.plain)
+            }
             if vm.expenses.isEmpty && !vm.isLoading {
                 placeholder("No expenses yet. Tap Add Expense to get started.")
             }

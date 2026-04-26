@@ -23,7 +23,14 @@ enum SupabaseProvider {
 
     /// Non-throwing convenience that hides the `Auth.User` type from view-model
     /// call sites so Features/ files don't need to `import Supabase`.
+    ///
+    /// IMPORTANT: This intentionally reads from the locally cached session
+    /// (`auth.currentUser`) and does *not* call `auth.user()` — the latter
+    /// performs a `GET /auth/v1/user` round trip and used to surface a
+    /// spurious "You need to sign in to do that" error when the network
+    /// blip swallowed by `try?`. The cached user is the source of truth
+    /// while a session is loaded; it stays in sync with refresh/sign-out.
     static func currentUserId() async -> UUID? {
-        try? await shared.auth.user().id
+        shared.auth.currentUser?.id
     }
 }

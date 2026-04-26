@@ -23,6 +23,19 @@ struct AddExpenseView: View {
         ))
     }
 
+    /// Edit-mode initializer. Pre-fills the form from the existing expense
+    /// and routes save through `rpc_update_expense`.
+    init(editingExpense: ExpenseDTO,
+         friendHint: FriendRowItem? = nil,
+         groupHint: GroupRowItem? = nil)
+    {
+        self._vm = State(initialValue: AddExpenseViewModel(
+            editingExpense: editingExpense,
+            friendHint: friendHint,
+            groupHint: groupHint
+        ))
+    }
+
     var body: some View {
         ZStack {
             AppColor.bgTop.ignoresSafeArea()
@@ -103,7 +116,7 @@ struct AddExpenseView: View {
             .scrollDismissesKeyboardForForms()
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 VStack(spacing: 0) {
-                    PrimaryButton(title: vm.isSubmitting ? "Adding…" : "Add Expense") {
+                    PrimaryButton(title: vm.primaryActionTitle) {
                         Task {
                             if await vm.submit() { dismiss() }
                         }
@@ -233,6 +246,9 @@ struct AddExpenseView: View {
     }
 
     private var headerSubtitle: String {
+        if vm.isEditing {
+            return "Update the title, amount, or other\ndetails for this expense."
+        }
         switch vm.mode {
         case .friends:
             return "Add expense details and split equally\nwith your friend."
@@ -255,7 +271,7 @@ struct AddExpenseView: View {
 
             Spacer()
 
-            Text("Add Expense")
+            Text(vm.screenTitle)
                 .font(AppFont.navTitle)
                 .foregroundStyle(AppColor.textPrimary)
 

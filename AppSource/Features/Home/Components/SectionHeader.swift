@@ -16,15 +16,18 @@ struct SectionHeader: View {
                 .font(.system(size: 17, weight: .semibold))
                 .foregroundStyle(AppColor.textPrimary)
             Spacer()
-            Button {
-                onAction?()
-            } label: {
-                Text(action)
-                    .font(AppFont.caption)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(AppColor.pandaBlue)
+            // Only render the trailing action button when a callback is wired.
+            // Home doesn't currently have working "View all" destinations and
+            // a no-op button is worse than no button at all.
+            if let onAction {
+                Button(action: onAction) {
+                    Text(action)
+                        .font(AppFont.caption)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(AppColor.pandaBlue)
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
     }
 }

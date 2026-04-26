@@ -49,7 +49,7 @@ final class FriendsService {
     /// Returns counterparties for the current user, optionally including pending
     /// friendships. Balances default to zero for pending rows (no expenses yet).
     func friendsWithBalances(status: FriendshipStatus = .accepted) async throws -> [FriendWithBalance] {
-        guard let me = try? await SupabaseProvider.auth.user().id else { throw AppError.notAuthenticated }
+        guard let me = await SupabaseProvider.currentUserId() else { throw AppError.notAuthenticated }
 
         async let f = friendships(status: status)
         async let b: [FriendBalanceDTO] = (status == .accepted ? balances() : .init())
@@ -166,7 +166,7 @@ final class FriendsService {
     /// direct delete because the `friendships_pair_delete` RLS policy already
     /// allows either party in the pair to drop the row.
     func decline(_ otherUserId: UUID) async throws {
-        guard let me = try? await SupabaseProvider.auth.user().id else { throw AppError.notAuthenticated }
+        guard let me = await SupabaseProvider.currentUserId() else { throw AppError.notAuthenticated }
         let pair = [me, otherUserId].sorted { $0.uuidString < $1.uuidString }
         try await db.from("friendships")
             .delete()

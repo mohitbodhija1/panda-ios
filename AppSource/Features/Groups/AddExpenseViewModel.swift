@@ -40,13 +40,39 @@ final class AddExpenseViewModel {
     let preselectedGroup: GroupRowItem?
     let preselectedFriend: FriendRowItem?
 
+    /// When non-nil the view is in *edit* mode: we patch the existing
+    /// expense via `rpc_update_expense` instead of creating a new one,
+    /// keep the original participant set, and lock the target.
+    let editingExpenseId: UUID?
+    /// User ids of the original splits — preserved verbatim on save so an
+    /// edit never silently adds/removes participants.
+    private var lockedParticipantIds: [UUID] = []
+    /// The original payer for the expense being edited. We preserve it on
+    /// save so editing the amount can't accidentally change who paid.
+    private var lockedPayerId: UUID?
+    /// The original `expense_date` (yyyy-MM-dd) when editing; preserved
+    /// so the activity timeline isn't reordered by an amount-only tweak.
+    private var lockedExpenseDate: String?
+    /// Original split type for the edited expense (we don't expose the
+    /// split type picker yet so we keep it stable).
+    private var lockedSplitType: SplitType = .equal
+
     var currency: String = UserPreferences.defaultCurrency
     var isSubmitting: Bool = false
     var errorMessage: String?
 
     /// True when the entry point pinned us to a single target. The view uses
     /// this to hide the segmented control.
-    var isModeLocked: Bool { preselectedGroup != nil || preselectedFriend != nil }
+    var isModeLocked: Bool { preselectedGroup != nil || preselectedFriend != nil || isEditing }
+
+    /// True when the view is editing an existing expense.
+    var isEditing: Bool { editingExpenseId != nil }
+
+    var screenTitle: String { isEditing ? "Edit Expense" : "Add Expense" }
+    var primaryActionTitle: String {
+        if isSubmitting { return isEditing ? "Saving…" : "Adding…" }
+        return isEditing ? "Save Changes" : "Add Expense"
+    }
 
     var selectedFriend: FriendRowItem? {
         if let pre = preselectedFriend { return pre }
@@ -68,6 +94,11 @@ final class AddExpenseViewModel {
         let titleOk = !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         let amountOk = parsedAmount != nil
         guard titleOk, amountOk, !isSubmitting else { return false }
+
+        // In edit mode the participants come from the original splits we
+        // already loaded; we just need to know we have at least one.
+        if isEditing { return !lockedParticipantIds.isEmpty }
+
         switch mode {
         case .group:   return selectedGroupId != nil && !groupMembers.isEmpty
         case .friends: return selectedFriend != nil
@@ -82,6 +113,7 @@ final class AddExpenseViewModel {
     init(preselectedGroup: GroupRowItem? = nil, preselectedFriend: FriendRowItem? = nil) {
         self.preselectedGroup = preselectedGroup
         self.preselectedFriend = preselectedFriend
+        self.editingExpenseId = nil
 
         if let friend = preselectedFriend {
             mode = .friends
@@ -98,7 +130,60 @@ final class AddExpenseViewModel {
         }
     }
 
+    /// Edit-mode initializer. Pre-fills every form field from the existing
+    /// expense and locks the target so users can only tweak title / amount
+    /// / emoji / currency / notes without accidentally changing the
+    /// participants. `friendHint` lets callers pass the counterparty
+    /// `FriendRowItem` so the row label reads as a name instead of an id.
+    init(editingExpense expense: ExpenseDTO,
+         friendHint: FriendRowItem? = nil,
+         groupHint: GroupRowItem? = nil)
+    {
+        self.editingExpenseId = expense.id
+        self.lockedPayerId = expense.paidBy
+        self.lockedExpenseDate = expense.expenseDate
+        self.lockedSplitType = expense.splitType
+
+        self.title = expense.title
+        self.notes = expense.notes ?? ""
+        self.emoji = expense.emoji ?? "💸"
+        self.amountText = NSDecimalNumber(decimal: expense.amount).stringValue
+        self.currency = expense.currency
+
+        if let groupId = expense.groupId {
+            self.preselectedFriend = nil
+            let group = groupHint ?? GroupRowItem(
+                id: groupId,
+                name: "Group",
+                memberCount: 0,
+                yourBalance: 0,
+                currency: expense.currency
+            )
+            self.preselectedGroup = group
+            self.mode = .group
+            self.availableGroups = [group]
+            self.selectedGroupId = groupId
+        } else {
+            self.preselectedGroup = nil
+            // Friend expenses always have exactly two participants — the
+            // counterparty's name will be filled in when `load()` resolves
+            // the splits and (optionally) the friendHint.
+            if let friendHint {
+                self.preselectedFriend = friendHint
+                self.availableFriends = [friendHint]
+                self.selectedFriendId = friendHint.id
+            } else {
+                self.preselectedFriend = nil
+            }
+            self.mode = .friends
+        }
+    }
+
     func load() async {
+        if isEditing {
+            await loadEditingContext()
+            return
+        }
         // Load both lists once unless we're locked to a single preselection
         // (which already populated the relevant array in init).
         await withTaskGroup(of: Void.self) { tasks in
@@ -110,6 +195,49 @@ final class AddExpenseViewModel {
             }
         }
         if mode == .group { await loadMembers() }
+    }
+
+    /// Loads the splits for the expense currently being edited so we know
+    /// the original participant set, then mirrors the create flow's
+    /// `groupMembers` array to keep the "Split Between" hint accurate.
+    private func loadEditingContext() async {
+        guard let expenseId = editingExpenseId else { return }
+        do {
+            let splits = try await expensesService.splits(for: expenseId)
+            lockedParticipantIds = splits.map(\.userId)
+
+            // Resolve participant profiles so the "Split Between" hint
+            // shows a sensible count regardless of the original surface.
+            var profilesList: [ProfileDTO] = []
+            for id in lockedParticipantIds {
+                if let p = try? await profiles.fetch(id: id) {
+                    profilesList.append(p)
+                }
+            }
+            groupMembers = profilesList
+
+            // For friend expenses, derive the counterparty so the row
+            // shows their name (not just "Friend") even when no hint
+            // was passed in.
+            if mode == .friends, selectedFriendId == nil,
+               let me = await SupabaseProvider.currentUserId(),
+               let other = lockedParticipantIds.first(where: { $0 != me }),
+               let counterparty = try? await profiles.fetch(id: other)
+            {
+                let row = FriendRowItem(
+                    id: counterparty.id,
+                    name: counterparty.displayName,
+                    avatarTint: AppColor.tint(for: counterparty.id),
+                    balance: 0,
+                    currency: counterparty.defaultCurrency,
+                    isPending: false
+                )
+                availableFriends = [row]
+                selectedFriendId = row.id
+            }
+        } catch {
+            errorMessage = AppError.wrap(error).errorDescription
+        }
     }
 
     private func loadGroups() async {
@@ -215,29 +343,43 @@ final class AddExpenseViewModel {
     }
 
     func submit() async -> Bool {
-        guard canSubmit,
-              let amount = parsedAmount,
-              let payerId = await SupabaseProvider.currentUserId()
-        else { return false }
+        guard canSubmit, let amount = parsedAmount else { return false }
 
         isSubmitting = true
         errorMessage = nil
         defer { isSubmitting = false }
 
+        do {
+            if isEditing {
+                _ = try await submitEdit(amount: amount)
+            } else {
+                _ = try await submitCreate(amount: amount)
+            }
+            return true
+        } catch {
+            errorMessage = AppError.wrap(error).errorDescription
+            return false
+        }
+    }
+
+    private func submitCreate(amount: Decimal) async throws -> ExpenseDTO {
+        guard let payerId = await SupabaseProvider.currentUserId() else {
+            throw AppError.notAuthenticated
+        }
         let today = ISO8601DateFormatter().string(from: Date()).prefix(10) // yyyy-MM-dd
 
         let groupId: UUID?
         let splits: [CreateExpenseInput.Split]
         switch mode {
         case .friends:
-            guard let friend = selectedFriend else { return false }
+            guard let friend = selectedFriend else { throw AppError.validation("Pick a friend") }
             groupId = nil
             splits = [
                 CreateExpenseInput.Split(user_id: payerId, share_count: 1),
                 CreateExpenseInput.Split(user_id: friend.id, share_count: 1)
             ]
         case .group:
-            guard let gid = selectedGroupId else { return false }
+            guard let gid = selectedGroupId else { throw AppError.validation("Pick a group") }
             groupId = gid
             splits = groupMembers.map { CreateExpenseInput.Split(user_id: $0.id, share_count: 1) }
         }
@@ -255,13 +397,37 @@ final class AddExpenseViewModel {
             split_type: .equal,
             splits: splits
         )
+        return try await expensesService.create(input)
+    }
 
-        do {
-            _ = try await expensesService.create(input)
-            return true
-        } catch {
-            errorMessage = AppError.wrap(error).errorDescription
-            return false
+    private func submitEdit(amount: Decimal) async throws -> ExpenseDTO {
+        guard let expenseId = editingExpenseId else {
+            throw AppError.validation("Missing expense id")
         }
+        guard !lockedParticipantIds.isEmpty else {
+            throw AppError.validation("Original participants not loaded")
+        }
+
+        let splits = lockedParticipantIds.map {
+            CreateExpenseInput.Split(user_id: $0, share_count: 1)
+        }
+
+        let input = UpdateExpenseInput(
+            expense_id: expenseId,
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+            notes: notes.isEmpty ? nil : notes,
+            emoji: emoji,
+            amount: amount,
+            currency: currency,
+            expense_date: lockedExpenseDate ?? String(ISO8601DateFormatter().string(from: Date()).prefix(10)),
+            split_type: lockedSplitType,
+            splits: splits
+        )
+
+        // The locked payer is preserved server-side because the update RPC
+        // never touches `paid_by`. We keep the property here for future
+        // multi-payer support without changing the call site.
+        _ = lockedPayerId
+        return try await expensesService.update(input)
     }
 }

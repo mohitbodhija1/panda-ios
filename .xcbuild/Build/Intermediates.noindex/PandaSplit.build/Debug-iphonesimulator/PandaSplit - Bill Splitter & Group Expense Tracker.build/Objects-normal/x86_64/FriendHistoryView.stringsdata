@@ -7,7 +7,7 @@
         "key": "History",
         "location": {
           "startingColumn": 18,
-          "startingLine": 96
+          "startingLine": 125
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "%lld entries",
         "location": {
           "startingColumn": 18,
-          "startingLine": 119
+          "startingLine": 148
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "Transactions",
         "location": {
           "startingColumn": 18,
-          "startingLine": 177
+          "startingLine": 206
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "%lld",
         "location": {
           "startingColumn": 18,
-          "startingLine": 181
+          "startingLine": 210
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "No shared transactions yet",
         "location": {
           "startingColumn": 18,
-          "startingLine": 201
+          "startingLine": 240
         }
       }
     ]

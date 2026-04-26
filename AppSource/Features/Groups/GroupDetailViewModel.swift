@@ -22,7 +22,15 @@ struct GroupMemberRowItem: Identifiable, Hashable {
 final class GroupDetailViewModel {
     let group: GroupRowItem
 
+    /// Mutable display name kept in sync with the latest server state so
+    /// renames reflect in the nav bar without re-creating the view.
+    var displayName: String
+
     var expenses: [ExpenseRowItem] = []
+    /// Lookup table backing tap-to-edit on expense rows. Mirrors the order
+    /// of `expenses` and lets the view resolve the full DTO without an
+    /// extra round-trip to Postgres.
+    var expensesById: [UUID: ExpenseDTO] = [:]
     var members: [GroupMemberRowItem] = []
     var memberIds: Set<UUID> = []
     var isOwner: Bool = false
@@ -31,6 +39,10 @@ final class GroupDetailViewModel {
     var youAreOwed: Decimal = 0
     var isLoading: Bool = false
     var isAddingMembers: Bool = false
+    var isRenaming: Bool = false
+    /// Tracks per-member removal so the row can show a spinner without
+    /// blocking the rest of the screen.
+    var removingMemberIds: Set<UUID> = []
     var errorMessage: String?
 
     private let expensesService = ExpensesService.shared
@@ -39,6 +51,7 @@ final class GroupDetailViewModel {
 
     init(group: GroupRowItem) {
         self.group = group
+        self.displayName = group.name
         if group.yourBalance > 0 { youAreOwed = group.yourBalance }
         if group.yourBalance < 0 { youOwe = -group.yourBalance }
     }
@@ -100,6 +113,7 @@ final class GroupDetailViewModel {
                     currency: e.currency
                 )
             }
+            expensesById = Dictionary(uniqueKeysWithValues: es.map { ($0.id, $0) })
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
         }
@@ -120,6 +134,50 @@ final class GroupDetailViewModel {
                 friendIds: Array(toAdd)
             )
             await load()
+        } catch {
+            errorMessage = AppError.wrap(error).errorDescription
+        }
+    }
+
+    /// Owner-only: rename the group. Optimistically updates `displayName`
+    /// so the nav title changes the moment the request is in flight, and
+    /// rolls back on failure. Returns true on success so callers can
+    /// dismiss any open editor.
+    @discardableResult
+    func rename(to newName: String) async -> Bool {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty,
+              trimmed != displayName,
+              !isRenaming else { return false }
+
+        let previous = displayName
+        displayName = trimmed
+        isRenaming = true
+        errorMessage = nil
+        defer { isRenaming = false }
+
+        do {
+            _ = try await groupsService.rename(groupId: group.id, to: trimmed)
+            return true
+        } catch {
+            displayName = previous
+            errorMessage = AppError.wrap(error).errorDescription
+            return false
+        }
+    }
+
+    /// Removes a single member from the group. Owners can remove anyone;
+    /// for self-removal the dedicated leave flow is preferred.
+    func removeMember(_ member: GroupMemberRowItem) async {
+        guard !removingMemberIds.contains(member.id) else { return }
+        removingMemberIds.insert(member.id)
+        errorMessage = nil
+        defer { removingMemberIds.remove(member.id) }
+
+        do {
+            try await groupsService.removeMember(groupId: group.id, userId: member.id)
+            members.removeAll { $0.id == member.id }
+            memberIds.remove(member.id)
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
         }

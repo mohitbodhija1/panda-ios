@@ -1,0 +1,112 @@
+{
+  "source": "/Users/mohitbodhija/Desktop/ios/panda2/AppSource/Features/Groups/EditGroupSheet.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Edit Group",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 75
+        }
+      },
+      {
+        "comment": "",
+        "key": "Remove %@?",
+        "location": {
+          "startingColumn": 17,
+          "startingLine": 96
+        }
+      },
+      {
+        "comment": "",
+        "key": "Update the group name and manage who's\npart of this group.",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 28
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "Remove",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "Cancel",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 105
+        }
+      },
+      {
+        "comment": "",
+        "key": "They will lose access to this group's expenses.",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 110
+        }
+      },
+      {
+        "comment": "",
+        "key": "Members",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 130
+        }
+      },
+      {
+        "comment": "",
+        "key": "Adding…",
+        "location": {
+          "startingColumn": 47,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "Add Members",
+        "location": {
+          "startingColumn": 61,
+          "startingLine": 143
+        }
+      },
+      {
+        "comment": "",
+        "key": "Owner",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 212
+        }
+      },
+      {
+        "comment": "",
+        "key": "Owner",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 190
+        }
+      },
+      {
+        "comment": "",
+        "key": "Member",
+        "location": {
+          "startingColumn": 56,
+          "startingLine": 190
+        }
+      }
+    ]
+  },
+  "version": 1
+}
