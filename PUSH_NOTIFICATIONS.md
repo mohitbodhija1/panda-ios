@@ -66,9 +66,15 @@ The repo already includes the entitlement and the iOS plumbing. Verify:
 1. **Signing & Capabilities** for the
    *PandaSplit - Bill Splitter & Group Expense Tracker* target lists
    **Push Notifications**. If it doesn't, add it via **+ Capability**.
-2. `PandaSplit.entitlements` has `aps-environment`:
-   - `development` while you're using a Debug build
-   - `production` for App Store / TestFlight Release builds
+2. The entitlements are split per build configuration so the embedded
+   `aps-environment` always matches the signing certificate:
+   - `PandaSplit.Debug.entitlements` → `aps-environment = development`
+     (used by Debug builds against sandbox APNs)
+   - `PandaSplit.Release.entitlements` → `aps-environment = production`
+     (used by App Store / TestFlight archives against production APNs)
+
+   Both files are wired up via `CODE_SIGN_ENTITLEMENTS` in the matching
+   build configuration — no manual switching needed before archiving.
 3. The SwiftUI app entry point already wires the delegate:
 
    ```swift

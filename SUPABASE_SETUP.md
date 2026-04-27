@@ -116,7 +116,9 @@ Configure the provider once per hosted project:
    offer Sign in with Apple on the web.
 3. In [Apple Developer → Identifiers](https://developer.apple.com/account/resources/identifiers/list/bundleId),
    edit the same App ID and turn on the **Sign In with Apple** capability so the
-   entitlement in [PandaSplit.entitlements](PandaSplit.entitlements) is valid in
+   entitlement declared in
+   [PandaSplit.Debug.entitlements](PandaSplit.Debug.entitlements) /
+   [PandaSplit.Release.entitlements](PandaSplit.Release.entitlements) is valid in
    production.
 
 Official reference: [Login with Apple (Swift)](https://supabase.com/docs/guides/auth/social-login/auth-apple?platform=swift).
