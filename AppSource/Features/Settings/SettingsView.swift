@@ -36,12 +36,9 @@ struct SettingsView: View {
     // @State private var isSendingTestPush: Bool = false
     // @State private var testPushMessage: String?
     // @State private var testPushIsError: Bool = false
-    // Delete-account flow is intentionally hidden until the server-side
-    // cascade + audit trail are finalised. Keep the state and dialog wiring
-    // so re-enabling is a one-line UI change.
-    // @State private var showDeleteAccountConfirm: Bool = false
-    // @State private var isDeletingAccount: Bool = false
-    // @State private var deleteAccountError: String?
+    @State private var showDeleteAccountConfirm: Bool = false
+    @State private var isDeletingAccount: Bool = false
+    @State private var deleteAccountError: String?
     @State private var path: [SettingsRoute] = []
     @Environment(AuthSession.self) private var session
     @Environment(\.dismiss) private var dismiss
@@ -110,15 +107,13 @@ struct SettingsView: View {
 
                         accountCard
 
-                        // Delete-account button hidden until server-side
-                        // cascade + audit pipeline are signed off.
-                        // deleteAccountRow
-                        // if let deleteAccountError {
-                        //     Text(deleteAccountError)
-                        //         .font(AppFont.caption)
-                        //         .foregroundStyle(AppColor.negative)
-                        //         .multilineTextAlignment(.center)
-                        // }
+                        deleteAccountRow
+                        if let deleteAccountError {
+                            Text(deleteAccountError)
+                                .font(AppFont.caption)
+                                .foregroundStyle(AppColor.negative)
+                                .multilineTextAlignment(.center)
+                        }
 
                         signOutRow
 
@@ -156,29 +151,34 @@ struct SettingsView: View {
         } message: {
             Text("You'll need to sign in again to access your groups and expenses.")
         }
-        // Delete-account confirmation hidden alongside the trigger row.
-        // .confirmationDialog(
-        //     "Delete your PandaSplit account?",
-        //     isPresented: $showDeleteAccountConfirm,
-        //     titleVisibility: .visible
-        // ) {
-        //     Button("Delete Account", role: .destructive) {
-        //         Task {
-        //             isDeletingAccount = true
-        //             deleteAccountError = nil
-        //             defer { isDeletingAccount = false }
-        //             do {
-        //                 try await session.deleteAccount()
-        //                 dismiss()
-        //             } catch {
-        //                 deleteAccountError = AppError.wrap(error).errorDescription
-        //             }
-        //         }
-        //     }
-        //     Button("Cancel", role: .cancel) {}
-        // } message: {
-        //     Text("This permanently removes your account. You cannot undo this.")
-        // }
+        .confirmationDialog(
+            "Delete your PandaSplit account?",
+            isPresented: $showDeleteAccountConfirm,
+            titleVisibility: .visible
+        ) {
+            Button("Delete Account", role: .destructive) {
+                Task {
+                    isDeletingAccount = true
+                    deleteAccountError = nil
+                    defer { isDeletingAccount = false }
+                    do {
+                        try await session.deleteAccount()
+                        dismiss()
+                    } catch {
+                        deleteAccountError = AppError.wrap(error).errorDescription
+                    }
+                }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text(
+                """
+                This permanently deletes your account, profile, device tokens, friendships, \
+                and any one-on-one expenses you authored. Expenses inside shared groups remain \
+                visible to other members as “Deleted user” so balances stay correct. This cannot be undone.
+                """
+            )
+        }
     }
 
     private var accountCard: some View {
@@ -338,36 +338,35 @@ struct SettingsView: View {
         openURL(url)
     }
 
-    // Hidden until delete-account flow is fully verified end-to-end.
-    // private var deleteAccountRow: some View {
-    //     Button {
-    //         showDeleteAccountConfirm = true
-    //     } label: {
-    //         HStack(spacing: 12) {
-    //             Image(systemName: "trash.fill")
-    //                 .font(.system(size: 15, weight: .semibold))
-    //                 .foregroundStyle(AppColor.negative)
-    //                 .frame(width: 32, height: 32)
-    //                 .background(Circle().fill(AppColor.negative.opacity(0.12)))
-    //             Text(isDeletingAccount ? "Deleting…" : "Delete Account")
-    //                 .font(AppFont.rowTitle)
-    //                 .foregroundStyle(AppColor.negative)
-    //             Spacer()
-    //         }
-    //         .padding(.horizontal, 14)
-    //         .padding(.vertical, 12)
-    //         .background(
-    //             RoundedRectangle(cornerRadius: 16, style: .continuous)
-    //                 .fill(Color.white)
-    //         )
-    //         .overlay(
-    //             RoundedRectangle(cornerRadius: 16, style: .continuous)
-    //                 .stroke(AppColor.cardHairline, lineWidth: 1)
-    //         )
-    //     }
-    //     .buttonStyle(.plain)
-    //     .disabled(isDeletingAccount)
-    // }
+    private var deleteAccountRow: some View {
+        Button {
+            showDeleteAccountConfirm = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "trash.fill")
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(AppColor.negative)
+                    .frame(width: 32, height: 32)
+                    .background(Circle().fill(AppColor.negative.opacity(0.12)))
+                Text(isDeletingAccount ? "Deleting…" : "Delete Account")
+                    .font(AppFont.rowTitle)
+                    .foregroundStyle(AppColor.negative)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(Color.white)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .stroke(AppColor.cardHairline, lineWidth: 1)
+            )
+        }
+        .buttonStyle(.plain)
+        .disabled(isDeletingAccount)
+    }
 
     private var signOutRow: some View {
         Button { showSignOutConfirm = true } label: {

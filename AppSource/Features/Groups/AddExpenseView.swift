@@ -88,10 +88,39 @@ struct AddExpenseView: View {
                             tint: AppColor.avatarPink,
                             title: "Amount (\(vm.currency))",
                             placeholder: "0.00",
-                            text: Binding(get: { vm.amountText }, set: { vm.amountText = $0 }),
+                            text: Binding(get: { vm.amountText }, set: {
+                                vm.amountText = $0
+                                vm.handleAmountChanged()
+                            }),
                             keyboard: .decimalPad,
                             autocap: .never
                         )
+                        if vm.mode == .friends && !vm.isEditing {
+                            TintedFormRowField(
+                                icon: "person.fill",
+                                tint: AppColor.avatarTintD,
+                                title: "Your Share (\(vm.currency))",
+                                placeholder: "0.00",
+                                text: Binding(get: { vm.myShareText }, set: {
+                                    vm.myShareText = $0
+                                    vm.handleMyShareChanged()
+                                }),
+                                keyboard: .decimalPad,
+                                autocap: .never
+                            )
+                            TintedFormRowField(
+                                icon: "person.2.fill",
+                                tint: AppColor.avatarTintE,
+                                title: "Friend Share (\(vm.currency))",
+                                placeholder: "0.00",
+                                text: Binding(get: { vm.friendShareText }, set: {
+                                    vm.friendShareText = $0
+                                    vm.handleFriendShareChanged()
+                                }),
+                                keyboard: .decimalPad,
+                                autocap: .never
+                            )
+                        }
                         TintedFormRow(
                             icon: "person.3.fill",
                             tint: AppColor.avatarGreen,
@@ -118,7 +147,10 @@ struct AddExpenseView: View {
                 VStack(spacing: 0) {
                     PrimaryButton(title: vm.primaryActionTitle) {
                         Task {
-                            if await vm.submit() { dismiss() }
+                            if await vm.submit() {
+                                NotificationCenter.default.post(name: .expenseDidMutate, object: nil)
+                                dismiss()
+                            }
                         }
                     }
                     .disabled(!vm.canSubmit)
@@ -230,7 +262,13 @@ struct AddExpenseView: View {
     private var splitLabel: String {
         switch vm.mode {
         case .friends:
-            return vm.selectedFriend == nil ? "Pick a friend" : "You + 1 friend (equal)"
+            guard vm.selectedFriend != nil else { return "Pick a friend" }
+            if let mine = vm.parsedMyShare, let theirs = vm.parsedFriendShare {
+                let mineText = NSDecimalNumber(decimal: mine).stringValue
+                let theirText = NSDecimalNumber(decimal: theirs).stringValue
+                return "You \(mineText) • Friend \(theirText)"
+            }
+            return "Enter both shares"
         case .group:
             if vm.groupMembers.isEmpty { return "No members" }
             let count = vm.groupMembers.count
@@ -240,7 +278,7 @@ struct AddExpenseView: View {
 
     private var splitIsPlaceholder: Bool {
         switch vm.mode {
-        case .friends: return vm.selectedFriend == nil
+        case .friends: return vm.selectedFriend == nil || !vm.isFriendSplitValid
         case .group:   return vm.groupMembers.isEmpty
         }
     }

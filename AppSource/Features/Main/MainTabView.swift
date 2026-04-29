@@ -20,7 +20,10 @@ struct MainTabView: View {
             PandaTabBar(selection: $selection, onFabTap: { showAddExpense = true })
         }
         .ignoresSafeArea(.keyboard)
-        .fullScreenCover(isPresented: $showAddExpense) {
+        .fullScreenCover(isPresented: $showAddExpense, onDismiss: {
+            // Product request: always land back on Home after adding expense.
+            selection = .home
+        }) {
             AddExpenseView()
         }
     }

@@ -19,12 +19,21 @@ import Observation
 @Observable
 @MainActor
 final class AddExpenseViewModel {
+    private enum LastEditedShare {
+        case mine
+        case friend
+    }
+
     var mode: ExpenseTarget = .group
 
     var title: String = ""
     var emoji: String = "💸"
     var amountText: String = ""
     var notes: String = ""
+    /// Friends-mode distribution (exact amounts). Used only in create mode.
+    var myShareText: String = ""
+    var friendShareText: String = ""
+    private var lastEditedShare: LastEditedShare?
 
     // Group target.
     var availableGroups: [GroupRowItem] = []
@@ -84,10 +93,24 @@ final class AddExpenseViewModel {
     }
 
     var parsedAmount: Decimal? {
-        let cleaned = amountText
-            .replacingOccurrences(of: ",", with: ".")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-        return Decimal(string: cleaned).flatMap { $0 > 0 ? $0 : nil }
+        parseDecimal(amountText).flatMap { $0 > 0 ? $0 : nil }
+    }
+
+    var parsedMyShare: Decimal? {
+        parseDecimal(myShareText).flatMap { $0 >= 0 ? $0 : nil }
+    }
+
+    var parsedFriendShare: Decimal? {
+        parseDecimal(friendShareText).flatMap { $0 >= 0 ? $0 : nil }
+    }
+
+    /// Friends-mode exact split must sum to total amount (± 0.01 tolerance).
+    var isFriendSplitValid: Bool {
+        guard let amount = parsedAmount,
+              let mine = parsedMyShare,
+              let friend = parsedFriendShare
+        else { return false }
+        return abs((mine + friend) - amount) <= 0.01
     }
 
     var canSubmit: Bool {
@@ -101,7 +124,7 @@ final class AddExpenseViewModel {
 
         switch mode {
         case .group:   return selectedGroupId != nil && !groupMembers.isEmpty
-        case .friends: return selectedFriend != nil
+        case .friends: return selectedFriend != nil && isFriendSplitValid
         }
     }
 
@@ -307,7 +330,71 @@ final class AddExpenseViewModel {
         case .friends:
             if selectedFriendId == nil { selectedFriendId = availableFriends.first?.id }
             syncCurrencyWithSelectedFriend()
+            seedEqualFriendSplitIfNeeded()
         }
+    }
+
+    /// Keeps friend split sensible while typing total amount:
+    /// if both share fields are still blank, prefill with equal split.
+    func handleAmountChanged() {
+        guard mode == .friends, !isEditing else { return }
+        guard let amount = parsedAmount else { return }
+
+        // Fresh form: first amount entry seeds equal split.
+        if myShareText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+           friendShareText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        {
+            applyEqualSplit(for: amount)
+            return
+        }
+
+        // Keep both shares synchronized with the updated total.
+        switch lastEditedShare {
+        case .mine:
+            guard let mine = parsedMyShare else { return }
+            let clampedMine = min(max(mine, 0), amount)
+            if clampedMine != mine {
+                myShareText = NSDecimalNumber(decimal: clampedMine.rounded(scale: 2)).stringValue
+            }
+            let friend = (amount - clampedMine).rounded(scale: 2)
+            friendShareText = NSDecimalNumber(decimal: friend).stringValue
+        case .friend:
+            guard let theirs = parsedFriendShare else { return }
+            let clampedFriend = min(max(theirs, 0), amount)
+            if clampedFriend != theirs {
+                friendShareText = NSDecimalNumber(decimal: clampedFriend.rounded(scale: 2)).stringValue
+            }
+            let mine = (amount - clampedFriend).rounded(scale: 2)
+            myShareText = NSDecimalNumber(decimal: mine).stringValue
+        case nil:
+            applyEqualSplit(for: amount)
+        }
+    }
+
+    /// User edited "Your Share" → keep total invariant by auto-updating friend share.
+    func handleMyShareChanged() {
+        guard mode == .friends, !isEditing else { return }
+        lastEditedShare = .mine
+        guard let amount = parsedAmount, let mine = parsedMyShare else { return }
+        let clampedMine = min(max(mine, 0), amount)
+        if clampedMine != mine {
+            myShareText = NSDecimalNumber(decimal: clampedMine.rounded(scale: 2)).stringValue
+        }
+        let friend = (amount - clampedMine).rounded(scale: 2)
+        friendShareText = NSDecimalNumber(decimal: friend).stringValue
+    }
+
+    /// User edited "Friend Share" → keep total invariant by auto-updating your share.
+    func handleFriendShareChanged() {
+        guard mode == .friends, !isEditing else { return }
+        lastEditedShare = .friend
+        guard let amount = parsedAmount, let theirs = parsedFriendShare else { return }
+        let clampedFriend = min(max(theirs, 0), amount)
+        if clampedFriend != theirs {
+            friendShareText = NSDecimalNumber(decimal: clampedFriend.rounded(scale: 2)).stringValue
+        }
+        let mine = (amount - clampedFriend).rounded(scale: 2)
+        myShareText = NSDecimalNumber(decimal: mine).stringValue
     }
 
     /// When the user picks a different group, align the default currency with
@@ -373,10 +460,16 @@ final class AddExpenseViewModel {
         switch mode {
         case .friends:
             guard let friend = selectedFriend else { throw AppError.validation("Pick a friend") }
+            guard let mine = parsedMyShare, let theirs = parsedFriendShare else {
+                throw AppError.validation("Enter how much each person owes.")
+            }
+            guard abs((mine + theirs) - amount) <= 0.01 else {
+                throw AppError.validation("Distributed amount must equal the total.")
+            }
             groupId = nil
             splits = [
-                CreateExpenseInput.Split(user_id: payerId, share_count: 1),
-                CreateExpenseInput.Split(user_id: friend.id, share_count: 1)
+                CreateExpenseInput.Split(user_id: payerId, amount_owed: mine),
+                CreateExpenseInput.Split(user_id: friend.id, amount_owed: theirs)
             ]
         case .group:
             guard let gid = selectedGroupId else { throw AppError.validation("Pick a group") }
@@ -394,7 +487,7 @@ final class AddExpenseViewModel {
             currency: currency,
             paid_by: payerId,
             expense_date: String(today),
-            split_type: .equal,
+            split_type: mode == .friends ? .exact : .equal,
             splits: splits
         )
         return try await expensesService.create(input)
@@ -429,5 +522,37 @@ final class AddExpenseViewModel {
         // multi-payer support without changing the call site.
         _ = lockedPayerId
         return try await expensesService.update(input)
+    }
+
+    private func parseDecimal(_ text: String) -> Decimal? {
+        let cleaned = text
+            .replacingOccurrences(of: ",", with: ".")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return Decimal(string: cleaned)
+    }
+
+    /// Prefill equal shares only when both fields are empty.
+    private func seedEqualFriendSplitIfNeeded() {
+        guard myShareText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              friendShareText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              let amount = parsedAmount
+        else { return }
+
+        applyEqualSplit(for: amount)
+    }
+
+    private func applyEqualSplit(for amount: Decimal) {
+        let half = (amount / 2).rounded(scale: 2)
+        myShareText = NSDecimalNumber(decimal: half).stringValue
+        friendShareText = NSDecimalNumber(decimal: (amount - half).rounded(scale: 2)).stringValue
+    }
+}
+
+private extension Decimal {
+    func rounded(scale: Int) -> Decimal {
+        var source = self
+        var result = Decimal()
+        NSDecimalRound(&result, &source, scale, .bankers)
+        return result
     }
 }

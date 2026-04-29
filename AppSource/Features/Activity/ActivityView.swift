@@ -59,6 +59,9 @@ struct ActivityView: View {
                 .refreshable { await vm.load() }
             }
             .task { await vm.load() }
+            .onReceive(NotificationCenter.default.publisher(for: .expenseDidMutate)) { _ in
+                Task { await vm.load() }
+            }
             .navigationDestination(for: ActivityDestination.self) { dest in
                 switch dest {
                 case .group(let g):  GroupDetailView(group: g)

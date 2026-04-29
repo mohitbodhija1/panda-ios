@@ -93,6 +93,9 @@ struct HomeView: View {
             .refreshable { await vm.load() }
         }
         .task { await vm.load() }
+        .onReceive(NotificationCenter.default.publisher(for: .expenseDidMutate)) { _ in
+            Task { await vm.load() }
+        }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }

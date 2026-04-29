@@ -12,6 +12,7 @@
 
 import Contacts
 import Foundation
+import Functions
 import Observation
 import Supabase
 
@@ -102,28 +103,83 @@ final class AuthSession {
         user = nil
     }
 
-    /// Permanently deletes the signed-in user via GoTrue (`DELETE /auth/v1/user`).
-    /// Requires a valid session JWT. Clears local auth state afterward.
+    /// Permanently deletes the signed-in user via the `delete_account` Edge Function
+    /// (DB anonymization + `auth.admin.deleteUser`). Requires a valid session JWT.
+    /// Clears local auth state afterward.
     func deleteAccount() async throws {
-        let session = try await SupabaseProvider.auth.session
-        let base = SupabaseEnvironment.url.absoluteString.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        guard let url = URL(string: base + "/auth/v1/user") else {
-            throw AppError.validation("Invalid Supabase URL.")
+        let session: Session
+        do {
+            session = try await SupabaseProvider.auth.session
+        } catch {
+            throw AppError.notAuthenticated
         }
-        var request = URLRequest(url: url)
-        request.httpMethod = "DELETE"
-        request.setValue("Bearer \(session.accessToken)", forHTTPHeaderField: "Authorization")
-        request.setValue(SupabaseEnvironment.anonKey, forHTTPHeaderField: "apikey")
 
-        let (_, response) = try await URLSession.shared.data(for: request)
-        guard let http = response as? HTTPURLResponse else {
-            throw AppError.unknown(NSError(domain: "AuthSession", code: -1))
-        }
-        guard (200...299).contains(http.statusCode) else {
-            throw AppError.accountDeletionFailed(http.statusCode)
+        do {
+            try await SupabaseProvider.functions.invoke(
+                "delete_account",
+                options: FunctionInvokeOptions(
+                    method: .post,
+                    headers: [
+                        "Authorization": "Bearer \(session.accessToken)",
+                        "apikey": SupabaseEnvironment.anonKey,
+                    ]
+                )
+            )
+        } catch let fnError as FunctionsError {
+            throw Self.mapDeleteAccountError(fnError)
+        } catch {
+            throw AppError.server(
+                "Could not delete your account: \(error.localizedDescription)"
+            )
         }
 
         try? await SupabaseProvider.auth.signOut()
         user = nil
+    }
+
+    /// Maps Edge Function failures to actionable copy (404 usually means the function was never deployed).
+    private static func mapDeleteAccountError(_ error: FunctionsError) -> AppError {
+        switch error {
+        case .relayError:
+            return .server(
+                "Could not reach account deletion. Check your connection and try again."
+            )
+        case .httpError(let code, let data):
+            let detail = edgeFunctionJSONMessage(from: data)
+            switch code {
+            case 401:
+                return .notAuthenticated
+            case 404:
+                return .server(
+                    "Account deletion isn’t available on this backend yet. Deploy the delete_account Edge Function and apply migrations (supabase functions deploy delete_account; supabase db push)."
+                )
+            case 500...599:
+                let suffix = detail.map { " \($0)" } ?? ""
+                return .server(
+                    "The server couldn’t finish deleting your account.\(suffix) Try again or contact support."
+                )
+            default:
+                let suffix = detail.map { ": \($0)" } ?? ""
+                return .server(
+                    "Could not delete your account (HTTP \(code))\(suffix). Try again or contact support."
+                )
+            }
+        }
+    }
+
+    private static func edgeFunctionJSONMessage(from data: Data) -> String? {
+        struct Body: Decodable {
+            let error: String?
+            let message: String?
+        }
+        guard !data.isEmpty else { return nil }
+        if let body = try? JSONDecoder().decode(Body.self, from: data) {
+            let combined = body.error ?? body.message
+            let t = combined?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            return t.isEmpty ? nil : t
+        }
+        let raw = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return raw.isEmpty ? nil : raw
     }
 }

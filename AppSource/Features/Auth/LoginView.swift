@@ -55,14 +55,16 @@ struct LoginView: View {
                     }
                     .padding(.top, 24)
 
-                    HStack {
-                        Button("Forgot password?") { /* illustrative */ }
-                            .font(AppFont.caption)
-                            .fontWeight(.semibold)
-                            .foregroundStyle(AppColor.pandaBlue)
-                        Spacer()
-                    }
-                    .padding(.top, 12)
+                    // Forgot-password flow is intentionally hidden for now.
+                    // Re-enable this block when reset-password UX is shipped.
+                    // HStack {
+                    //     Button("Forgot password?") { /* illustrative */ }
+                    //         .font(AppFont.caption)
+                    //         .fontWeight(.semibold)
+                    //         .foregroundStyle(AppColor.pandaBlue)
+                    //     Spacer()
+                    // }
+                    // .padding(.top, 12)
 
                     PrimaryButton(title: isSubmitting ? "Logging in..." : "Log In") {
                         Task { await submit() }

@@ -72,3 +72,6 @@ verify_jwt = false
 
 [functions.fx_refresh]
 verify_jwt = false
+
+[functions.delete_account]
+verify_jwt = true

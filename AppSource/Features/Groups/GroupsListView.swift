@@ -49,6 +49,9 @@ struct GroupsListView: View {
             .refreshable { await vm.load() }
         }
         .task { await vm.load() }
+        .onReceive(NotificationCenter.default.publisher(for: .expenseDidMutate)) { _ in
+            Task { await vm.load() }
+        }
         .navigationDestination(for: GroupRowItem.self) { group in
             GroupDetailView(group: group)
         }
