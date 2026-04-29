@@ -6,6 +6,8 @@
 import SwiftUI
 
 struct InviteFriendsCard: View {
+    private static let appStoreURL = URL(string: "https://apps.apple.com/in/app/pandasplit-split-bills/id6763338956")!
+
     private static var shareMessage: String {
         let name = (Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
             ?? (Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String)
@@ -35,11 +37,9 @@ struct InviteFriendsCard: View {
 
             Spacer()
 
-            ShareLink(
-                item: Self.shareMessage,
-                subject: Text("Join me on PandaSplit"),
-                message: Text(Self.shareMessage)
-            ) {
+            ShareLink(item: Self.appStoreURL,
+                      subject: Text("Join me on PandaSplit"),
+                      message: Text("\(Self.shareMessage)\n\(Self.appStoreURL.absoluteString)")) {
                 Text("Share")
                     .font(.system(size: 13, weight: .semibold))
                     .foregroundStyle(AppColor.pandaBlue)

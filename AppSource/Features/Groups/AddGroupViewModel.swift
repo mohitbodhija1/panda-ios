@@ -12,6 +12,8 @@ final class AddGroupViewModel {
     var name: String = ""
     var description: String = ""
     var defaultCurrency: String = UserPreferences.defaultCurrency
+    /// Random-once avatar assignment for the group being created.
+    var selectedAvatarKey: String = GroupAvatar.randomKey()
     var selectedMemberIds: Set<UUID> = []
     /// Accepted friends shown in the multi-select picker. Populated lazily by
     /// `loadFriends()` so the form can render selected names before submit.
@@ -71,6 +73,7 @@ final class AddGroupViewModel {
                 name: name.trimmingCharacters(in: .whitespacesAndNewlines),
                 description: description.isEmpty ? nil : description,
                 defaultCurrency: defaultCurrency,
+                avatarKey: selectedAvatarKey,
                 memberUserIds: Array(selectedMemberIds)
             )
             return true

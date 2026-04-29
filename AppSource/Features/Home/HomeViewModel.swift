@@ -39,6 +39,7 @@ final class HomeViewModel {
     private let activityService = ActivityService.shared
 
     func load() async {
+        if isLoading { return }
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
@@ -50,11 +51,10 @@ final class HomeViewModel {
             async let groupBalances = groupsService.myBalanceAcrossGroups()
             async let members = groupsService.myGroupMemberships()
             async let activity = activityService.recent(limit: 10)
-            async let friendBalances = friendsService.balances()
             async let friendsWithBalances = friendsService.friendsWithBalances(status: .accepted)
 
-            let (p, s, gs, gbs, mems, acts, fbs, fwbs) = try await (
-                profile, summary, groupsList, groupBalances, members, activity, friendBalances, friendsWithBalances
+            let (p, s, gs, gbs, mems, acts, fwbs) = try await (
+                profile, summary, groupsList, groupBalances, members, activity, friendsWithBalances
             )
 
             firstName = p.fullName?.components(separatedBy: " ").first
@@ -68,11 +68,9 @@ final class HomeViewModel {
             youOwe = s?.youOwe ?? 0
             youAreOwed = s?.youAreOwed ?? 0
 
-            owedGroupsCount = gbs.filter { $0.balance != 0 }.count
+            owedGroupsCount = gbs.filter { $0.balance < 0 }.count
             let me = await SupabaseProvider.currentUserId()
-            if let me {
-                owedFromCount = fbs.filter { $0.balance(for: me) > 0 }.count
-            }
+            owedFromCount = fwbs.filter { $0.netOwed > 0 }.count
 
             let memberCountByGroup = Dictionary(grouping: mems, by: { $0.groupId })
                 .mapValues(\.count)
@@ -87,7 +85,8 @@ final class HomeViewModel {
                     name: $0.name,
                     memberCount: memberCountByGroup[$0.id] ?? 0,
                     yourBalance: myBalanceByGroup[$0.id] ?? 0,
-                    currency: $0.defaultCurrency
+                    currency: $0.defaultCurrency,
+                    avatarKey: $0.avatarUrl
                 )
             }
 
@@ -113,6 +112,9 @@ final class HomeViewModel {
                 fallbackCurrency: profileCurrency
             )
             recentActivity = acts.map { ActivityItemBuilder.make($0, in: context) }
+        } catch is CancellationError {
+            // Pull-to-refresh can cancel an in-flight load when a new one starts.
+            // That's expected and should not show an error banner.
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
         }

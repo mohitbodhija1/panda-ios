@@ -56,7 +56,12 @@ final class GroupsService {
             .value
     }
 
-    func create(name: String, description: String?, defaultCurrency: String, memberUserIds: [UUID]) async throws -> GroupDTO {
+    func create(name: String,
+                description: String?,
+                defaultCurrency: String,
+                avatarKey: String?,
+                memberUserIds: [UUID]) async throws -> GroupDTO
+    {
         // Routed through rpc_create_group (SECURITY DEFINER) so `created_by`
         // is set from auth.uid() server-side. This avoids the
         // `groups_authed_insert` WITH CHECK failing when the client UUID and
@@ -65,6 +70,7 @@ final class GroupsService {
             let name: String
             let description: String?
             let default_currency: String
+            let avatar_url: String?
             let member_ids: [UUID]
         }
         struct Wrapper: Encodable { let payload: Payload }
@@ -73,6 +79,7 @@ final class GroupsService {
             name: name,
             description: description,
             default_currency: defaultCurrency,
+            avatar_url: avatarKey,
             member_ids: memberUserIds
         ))
 
@@ -143,5 +150,18 @@ final class GroupsService {
             .update(["is_archived": true])
             .eq("id", value: groupId)
             .execute()
+    }
+
+    /// Owner-only: update a group's avatar key.
+    @discardableResult
+    func updateAvatar(groupId: UUID, avatarKey: String) async throws -> GroupDTO {
+        struct Patch: Encodable { let avatar_url: String }
+        return try await db.from("groups")
+            .update(Patch(avatar_url: avatarKey))
+            .eq("id", value: groupId)
+            .select()
+            .single()
+            .execute()
+            .value
     }
 }

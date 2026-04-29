@@ -35,7 +35,8 @@ final class GroupsListViewModel {
                     name: $0.name,
                     memberCount: memberCountByGroup[$0.id] ?? 0,
                     yourBalance: balanceByGroup[$0.id] ?? 0,
-                    currency: $0.defaultCurrency
+                    currency: $0.defaultCurrency,
+                    avatarKey: $0.avatarUrl
                 )
             }
         } catch {

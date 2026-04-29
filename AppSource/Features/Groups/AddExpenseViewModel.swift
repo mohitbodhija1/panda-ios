@@ -39,6 +39,8 @@ final class AddExpenseViewModel {
     var availableGroups: [GroupRowItem] = []
     var selectedGroupId: UUID?
     var groupMembers: [ProfileDTO] = []
+    /// Create-mode participant selection for group expenses.
+    var selectedGroupMemberIds: Set<UUID> = []
 
     // Friend target.
     var availableFriends: [FriendRowItem] = []
@@ -123,7 +125,8 @@ final class AddExpenseViewModel {
         if isEditing { return !lockedParticipantIds.isEmpty }
 
         switch mode {
-        case .group:   return selectedGroupId != nil && !groupMembers.isEmpty
+        case .group:
+            return selectedGroupId != nil && !groupMembers.isEmpty && !selectedGroupMemberIds.isEmpty
         case .friends: return selectedFriend != nil && isFriendSplitValid
         }
     }
@@ -180,7 +183,8 @@ final class AddExpenseViewModel {
                 name: "Group",
                 memberCount: 0,
                 yourBalance: 0,
-                currency: expense.currency
+                currency: expense.currency,
+                avatarKey: nil
             )
             self.preselectedGroup = group
             self.mode = .group
@@ -238,6 +242,7 @@ final class AddExpenseViewModel {
                 }
             }
             groupMembers = profilesList
+            selectedGroupMemberIds = Set(lockedParticipantIds)
 
             // For friend expenses, derive the counterparty so the row
             // shows their name (not just "Friend") even when no hint
@@ -279,7 +284,8 @@ final class AddExpenseViewModel {
                     name: $0.name,
                     memberCount: memberCount[$0.id] ?? 0,
                     yourBalance: balanceByGroup[$0.id] ?? 0,
-                    currency: $0.defaultCurrency
+                    currency: $0.defaultCurrency,
+                    avatarKey: $0.avatarUrl
                 )
             }
             if mode == .group, selectedGroupId == nil {
@@ -424,6 +430,11 @@ final class AddExpenseViewModel {
                 }
             }
             groupMembers = profilesList
+            let loadedIds = Set(groupMembers.map(\.id))
+            selectedGroupMemberIds = selectedGroupMemberIds.intersection(loadedIds)
+            if selectedGroupMemberIds.isEmpty {
+                selectedGroupMemberIds = loadedIds
+            }
         } catch {
             errorMessage = AppError.wrap(error).errorDescription
         }
@@ -473,8 +484,14 @@ final class AddExpenseViewModel {
             ]
         case .group:
             guard let gid = selectedGroupId else { throw AppError.validation("Pick a group") }
+            let splitUserIds = groupMembers
+                .map(\.id)
+                .filter { selectedGroupMemberIds.contains($0) }
+            guard !splitUserIds.isEmpty else {
+                throw AppError.validation("Select at least one member to split this expense.")
+            }
             groupId = gid
-            splits = groupMembers.map { CreateExpenseInput.Split(user_id: $0.id, share_count: 1) }
+            splits = splitUserIds.map { CreateExpenseInput.Split(user_id: $0, share_count: 1) }
         }
 
         let input = CreateExpenseInput(
@@ -545,6 +562,29 @@ final class AddExpenseViewModel {
         let half = (amount / 2).rounded(scale: 2)
         myShareText = NSDecimalNumber(decimal: half).stringValue
         friendShareText = NSDecimalNumber(decimal: (amount - half).rounded(scale: 2)).stringValue
+    }
+
+    func isGroupMemberSelected(_ memberId: UUID) -> Bool {
+        selectedGroupMemberIds.contains(memberId)
+    }
+
+    func toggleGroupMember(_ memberId: UUID) {
+        guard mode == .group, !isEditing else { return }
+        if selectedGroupMemberIds.contains(memberId) {
+            selectedGroupMemberIds.remove(memberId)
+        } else {
+            selectedGroupMemberIds.insert(memberId)
+        }
+    }
+
+    func selectAllGroupMembers() {
+        guard mode == .group, !isEditing else { return }
+        selectedGroupMemberIds = Set(groupMembers.map(\.id))
+    }
+
+    func clearSelectedGroupMembers() {
+        guard mode == .group, !isEditing else { return }
+        selectedGroupMemberIds.removeAll()
     }
 }
 

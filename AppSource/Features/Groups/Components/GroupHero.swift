@@ -6,6 +6,9 @@
 import SwiftUI
 
 struct GroupHero: View {
+    let groupId: UUID
+    let avatarKey: String?
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 24, style: .continuous)
@@ -17,10 +20,17 @@ struct GroupHero: View {
                     )
                 )
 
-            Image("pandas_group")
-                .resizable()
-                .scaledToFit()
-                .padding(.vertical, 14)
+            ZStack {
+                Circle()
+                    .fill(Color.white.opacity(0.72))
+                    .frame(width: 164, height: 164)
+                Image(GroupAvatar.imageName(for: avatarKey, groupId: groupId))
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 148, height: 148)
+                    .clipShape(Circle())
+            }
+            .padding(.vertical, 8)
         }
         .frame(height: 180)
         .overlay(
@@ -31,5 +41,7 @@ struct GroupHero: View {
 }
 
 #Preview {
-    GroupHero().padding().background(AppColor.bgTop)
+    GroupHero(groupId: UUID(), avatarKey: "group_avatar_3")
+    .padding()
+    .background(AppColor.bgTop)
 }

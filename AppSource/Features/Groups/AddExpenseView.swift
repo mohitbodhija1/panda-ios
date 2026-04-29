@@ -14,6 +14,7 @@ struct AddExpenseView: View {
     @State private var vm: AddExpenseViewModel
     @State private var showGroupPicker: Bool = false
     @State private var showFriendPicker: Bool = false
+    @State private var showSplitMembersPicker: Bool = false
     @Environment(\.dismiss) private var dismiss
 
     init(preselectedGroup: GroupRowItem? = nil, preselectedFriend: FriendRowItem? = nil) {
@@ -121,13 +122,27 @@ struct AddExpenseView: View {
                                 autocap: .never
                             )
                         }
-                        TintedFormRow(
-                            icon: "person.3.fill",
-                            tint: AppColor.avatarGreen,
-                            title: "Split Between",
-                            value: splitLabel,
-                            isPlaceholder: splitIsPlaceholder
-                        )
+                        if vm.mode == .group && !vm.isEditing {
+                            Button { showSplitMembersPicker = true } label: {
+                                TintedFormRow(
+                                    icon: "person.3.fill",
+                                    tint: AppColor.avatarGreen,
+                                    title: "Split Between",
+                                    value: splitLabel,
+                                    isPlaceholder: splitIsPlaceholder,
+                                    trailingChevron: true
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        } else {
+                            TintedFormRow(
+                                icon: "person.3.fill",
+                                tint: AppColor.avatarGreen,
+                                title: "Split Between",
+                                value: splitLabel,
+                                isPlaceholder: splitIsPlaceholder
+                            )
+                        }
                     }
 
                     if let message = vm.errorMessage {
@@ -194,6 +209,10 @@ struct AddExpenseView: View {
                 }
             }
             Button("Cancel", role: .cancel) {}
+        }
+        .sheet(isPresented: $showSplitMembersPicker) {
+            splitMembersSheet
+                .presentationDetents([.large])
         }
     }
 
@@ -271,15 +290,20 @@ struct AddExpenseView: View {
             return "Enter both shares"
         case .group:
             if vm.groupMembers.isEmpty { return "No members" }
-            let count = vm.groupMembers.count
-            return "\(count) " + (count == 1 ? "person" : "people") + " (equal)"
+            let selectedCount = vm.selectedGroupMemberIds.count
+            let total = vm.groupMembers.count
+            if selectedCount == 0 { return "No members selected" }
+            if selectedCount == total {
+                return "\(total) " + (total == 1 ? "person" : "people") + " (equal)"
+            }
+            return "\(selectedCount) of \(total) selected"
         }
     }
 
     private var splitIsPlaceholder: Bool {
         switch vm.mode {
         case .friends: return vm.selectedFriend == nil || !vm.isFriendSplitValid
-        case .group:   return vm.groupMembers.isEmpty
+        case .group:   return vm.groupMembers.isEmpty || vm.selectedGroupMemberIds.isEmpty
         }
     }
 
@@ -316,6 +340,88 @@ struct AddExpenseView: View {
             Spacer()
 
             Color.clear.frame(width: 40, height: 40)
+        }
+    }
+
+    private var splitMembersSheet: some View {
+        NavigationStack {
+            ZStack {
+                AppColor.bgTop.ignoresSafeArea()
+
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 12) {
+                        HStack(spacing: 10) {
+                            Button("Select All") { vm.selectAllGroupMembers() }
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(AppColor.pandaBlue)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Capsule().fill(AppColor.chipBlue))
+
+                            Button("Clear") { vm.clearSelectedGroupMembers() }
+                                .font(.system(size: 14, weight: .semibold))
+                                .foregroundStyle(AppColor.negative)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 8)
+                                .background(Capsule().fill(AppColor.negative.opacity(0.12)))
+
+                            Spacer()
+                        }
+
+                        VStack(spacing: 10) {
+                            ForEach(vm.groupMembers, id: \.id) { member in
+                                Button {
+                                    vm.toggleGroupMember(member.id)
+                                } label: {
+                                    HStack(spacing: 12) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(AppColor.tint(for: member.id).opacity(0.28))
+                                                .frame(width: 36, height: 36)
+                                            Text(String(member.displayName.prefix(1)))
+                                                .font(.system(size: 14, weight: .bold, design: .rounded))
+                                                .foregroundStyle(AppColor.textPrimary)
+                                        }
+
+                                        Text(member.displayName)
+                                            .font(AppFont.rowTitle)
+                                            .foregroundStyle(AppColor.textPrimary)
+
+                                        Spacer()
+
+                                        Image(systemName: vm.isGroupMemberSelected(member.id) ? "checkmark.circle.fill" : "circle")
+                                            .font(.system(size: 20, weight: .semibold))
+                                            .foregroundStyle(vm.isGroupMemberSelected(member.id) ? AppColor.pandaBlue : AppColor.textSecondary.opacity(0.45))
+                                    }
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 12)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                            .fill(Color.white)
+                                    )
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                            .stroke(AppColor.cardHairline, lineWidth: 1)
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.top, 12)
+                    .padding(.bottom, 20)
+                }
+            }
+            .navigationTitle("Split Between")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Done") { showSplitMembersPicker = false }
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(AppColor.pandaBlue)
+                }
+            }
         }
     }
 }

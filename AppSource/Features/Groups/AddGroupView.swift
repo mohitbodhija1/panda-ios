@@ -25,13 +25,39 @@ struct AddGroupView: View {
                             .multilineTextAlignment(.center)
                     }
 
-                    Image("pandas_group")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 190)
-
-                    AvatarPickerCircle()
-                        .padding(.top, -16)
+                    VStack(spacing: 10) {
+                        Image(GroupAvatar.imageName(for: vm.selectedAvatarKey, groupId: nil))
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 124, height: 124)
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(AppColor.cardHairline, lineWidth: 1)
+                            )
+                        Text("Pick your group avatar")
+                            .font(AppFont.rowSubtitle)
+                            .foregroundStyle(AppColor.textSecondary)
+                        HStack(spacing: 12) {
+                            ForEach(GroupAvatar.keys, id: \.self) { key in
+                                Button {
+                                    vm.selectedAvatarKey = key
+                                } label: {
+                                    Image(key)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 46, height: 46)
+                                        .clipShape(Circle())
+                                        .overlay(
+                                            Circle()
+                                                .stroke(vm.selectedAvatarKey == key ? AppColor.pandaBlue : AppColor.cardHairline,
+                                                        lineWidth: vm.selectedAvatarKey == key ? 2 : 1)
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
+                    }
 
                     TintedFormCard {
                         TintedFormRowField(

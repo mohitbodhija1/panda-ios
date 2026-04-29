@@ -134,29 +134,13 @@ struct EditGroupSheet: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Button { showAddMembers = true } label: {
-                HStack(spacing: 12) {
-                    Image(systemName: "person.crop.circle.badge.plus")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(AppColor.pandaBlue)
-                        .frame(width: 38, height: 38)
-                        .background(Circle().fill(AppColor.chipBlue))
-                    Text(vm.isAddingMembers ? "Adding…" : "Add Members")
-                        .font(AppFont.rowTitle)
-                        .foregroundStyle(AppColor.textPrimary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 12, weight: .semibold))
-                        .foregroundStyle(AppColor.textSecondary)
-                }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
-                .background(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .fill(Color.white)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 18, style: .continuous)
-                        .stroke(AppColor.cardHairline, lineWidth: 1)
+                TintedFormRow(
+                    icon: "person.crop.circle.badge.plus",
+                    tint: AppColor.chipBlue,
+                    title: vm.isAddingMembers ? "Adding…" : "Add Members",
+                    value: "Invite friends to this group",
+                    isPlaceholder: true,
+                    trailingChevron: true
                 )
             }
             .buttonStyle(.plain)

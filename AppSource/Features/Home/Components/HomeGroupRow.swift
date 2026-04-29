@@ -48,14 +48,18 @@ struct HomeGroupRow: View {
 
     private var thumbnail: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
+            Circle()
                 .fill(AppColor.chipBlue)
                 .frame(width: 50, height: 50)
-            Image("panda_logo")
+            Image(GroupAvatar.imageName(for: group.avatarKey, groupId: group.id))
                 .resizable()
                 .scaledToFit()
                 .frame(width: 42, height: 42)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .stroke(Color.white, lineWidth: 1)
+                )
         }
     }
 

@@ -76,18 +76,34 @@ struct FriendsMultiPickerSheet: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 20)
                 }
+
+                Spacer(minLength: 0)
             }
             .padding(.top, 6)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             .safeAreaInset(edge: .bottom, spacing: 0) {
-                PrimaryButton(title: confirmLabel) {
-                    onConfirm(staged)
-                    dismiss()
+                VStack(spacing: 0) {
+                    PrimaryButton(title: confirmLabel) {
+                        onConfirm(staged)
+                        dismiss()
+                    }
+                    .disabled(staged.isEmpty)
+                    .opacity(staged.isEmpty ? 0.6 : 1)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    .padding(.bottom, 12)
+                    .background(
+                        LinearGradient(
+                            colors: [AppColor.bgTop.opacity(0), AppColor.bgTop],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(height: 24)
+                        .offset(y: -24),
+                        alignment: .top
+                    )
+                    .background(AppColor.bgTop)
                 }
-                .opacity(staged.isEmpty ? 0.6 : 1)
-                .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 12)
-                .background(AppColor.bgTop)
             }
         }
         .task { await load() }

@@ -25,6 +25,8 @@ final class GroupDetailViewModel {
     /// Mutable display name kept in sync with the latest server state so
     /// renames reflect in the nav bar without re-creating the view.
     var displayName: String
+    /// Mutable avatar key so owner changes reflect immediately in the hero.
+    var avatarKey: String?
 
     var expenses: [ExpenseRowItem] = []
     /// Lookup table backing tap-to-edit on expense rows. Mirrors the order
@@ -40,6 +42,7 @@ final class GroupDetailViewModel {
     var isLoading: Bool = false
     var isAddingMembers: Bool = false
     var isRenaming: Bool = false
+    var isUpdatingAvatar: Bool = false
     /// Tracks per-member removal so the row can show a spinner without
     /// blocking the rest of the screen.
     var removingMemberIds: Set<UUID> = []
@@ -52,6 +55,7 @@ final class GroupDetailViewModel {
     init(group: GroupRowItem) {
         self.group = group
         self.displayName = group.name
+        self.avatarKey = group.avatarKey
         if group.yourBalance > 0 { youAreOwed = group.yourBalance }
         if group.yourBalance < 0 { youOwe = -group.yourBalance }
     }
@@ -179,6 +183,26 @@ final class GroupDetailViewModel {
             members.removeAll { $0.id == member.id }
             memberIds.remove(member.id)
         } catch {
+            errorMessage = AppError.wrap(error).errorDescription
+        }
+    }
+
+    /// Owner-only: set one of the predefined avatar keys for the group.
+    func updateAvatar(to newKey: String) async {
+        guard GroupAvatar.keys.contains(newKey),
+              newKey != avatarKey,
+              !isUpdatingAvatar else { return }
+
+        let previous = avatarKey
+        avatarKey = newKey
+        isUpdatingAvatar = true
+        errorMessage = nil
+        defer { isUpdatingAvatar = false }
+
+        do {
+            _ = try await groupsService.updateAvatar(groupId: group.id, avatarKey: newKey)
+        } catch {
+            avatarKey = previous
             errorMessage = AppError.wrap(error).errorDescription
         }
     }

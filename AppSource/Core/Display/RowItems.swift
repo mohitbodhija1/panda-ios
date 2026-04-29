@@ -16,6 +16,7 @@ struct GroupRowItem: Identifiable, Hashable {
     /// Positive → you're owed. Negative → you owe. Zero → settled.
     let yourBalance: Decimal
     let currency: String
+    let avatarKey: String?
 }
 
 struct FriendRowItem: Identifiable, Hashable {

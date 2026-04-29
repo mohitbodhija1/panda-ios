@@ -45,7 +45,8 @@ final class ActivityViewModel {
                     name: $0.name,
                     memberCount: memberCountByGroup[$0.id] ?? 0,
                     yourBalance: 0,
-                    currency: $0.defaultCurrency
+                    currency: $0.defaultCurrency,
+                    avatarKey: $0.avatarUrl
                 ))
             })
 
