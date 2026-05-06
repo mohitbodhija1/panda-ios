@@ -141,7 +141,82 @@ final class FriendsService {
 
     func invite(channel: FriendInviteChannel, target: String) async throws {
         struct Args: Encodable { let channel: String; let target: String }
-        try await db.rpc("rpc_invite_friend", params: Args(channel: channel.rawValue, target: target)).execute()
+        struct Result: Decodable {
+            let ok: Bool
+            let delivered: Bool?
+        }
+
+        guard channel == .email else {
+            throw AppError.server("Email invites are sent by email only right now.")
+        }
+
+        let session: Session
+        do {
+            session = try await SupabaseProvider.auth.session
+        } catch {
+            throw AppError.notAuthenticated
+        }
+
+        do {
+            let result: Result = try await SupabaseProvider.functions.invoke(
+                "friend_invite_link",
+                options: FunctionInvokeOptions(
+                    method: .post,
+                    headers: [
+                        "Authorization": "Bearer \(session.accessToken)",
+                        "apikey": SupabaseEnvironment.anonKey,
+                    ],
+                    body: Args(channel: channel.rawValue, target: target.trimmingCharacters(in: .whitespacesAndNewlines))
+                )
+            )
+
+            if !result.ok || result.delivered != true {
+                throw AppError.server("Invite email was not delivered.")
+            }
+        } catch let fnError as FunctionsError {
+            throw Self.mapInviteError(fnError)
+        } catch {
+            throw AppError.wrap(error)
+        }
+    }
+
+    private static func edgeFunctionJSONMessage(from data: Data) -> String? {
+        struct Body: Decodable {
+            let error: String?
+            let stage: String?
+        }
+        guard !data.isEmpty else { return nil }
+        if let body = try? JSONDecoder().decode(Body.self, from: data) {
+            let error = body.error?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let stage = body.stage?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+            let parts = [stage.isEmpty ? nil : stage, error.isEmpty ? nil : error].compactMap { $0 }
+            return parts.isEmpty ? nil : parts.joined(separator: ": ")
+        }
+        let raw = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return raw.isEmpty ? nil : raw
+    }
+
+    private static func mapInviteError(_ error: FunctionsError) -> AppError {
+        switch error {
+        case .relayError:
+            return .server("Could not reach invite delivery. Check your connection and try again.")
+        case .httpError(let code, let data):
+            let detail = edgeFunctionJSONMessage(from: data)
+            switch code {
+            case 401:
+                return .notAuthenticated
+            case 400:
+                let suffix = detail.map { ": \($0)" } ?? ""
+                return .server("Invite request was rejected\(suffix).")
+            case 500...599:
+                let suffix = detail.map { " \($0)" } ?? ""
+                return .server("Invite delivery failed\(suffix).")
+            default:
+                let suffix = detail.map { ": \($0)" } ?? ""
+                return .server("Invite failed (HTTP \(code))\(suffix).")
+            }
+        }
     }
 
     func accept(_ otherUserId: UUID) async throws -> FriendshipDTO {

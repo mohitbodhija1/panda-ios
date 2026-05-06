@@ -21,12 +21,14 @@ supabase/
     20260422120900_rls.sql
     20260422121000_rpcs.sql
     20260422121100_storage.sql
+    20260506090000_welcome_email.sql
   functions/
     _shared/                   Service-role client + APNs helper
     notify_on_expense/         DB webhook -> APNs
     notify_on_settlement/      DB webhook -> APNs
     notify_on_friendship/      DB webhook -> inbox + APNs (friend accept / decline)
     friend_invite_link/        DB webhook -> Resend / Twilio
+    welcome_email/             DB webhook -> Resend welcome email
     recurring_runner/          Daily cron
     fx_refresh/                Daily cron
 ```
@@ -56,6 +58,7 @@ supabase functions deploy notify_on_expense
 supabase functions deploy notify_on_settlement
 supabase functions deploy notify_on_friendship
 supabase functions deploy friend_invite_link
+supabase functions deploy welcome_email
 supabase functions deploy recurring_runner
 supabase functions deploy fx_refresh
 ```
@@ -70,15 +73,20 @@ After `db push` and `functions deploy`, configure in the Supabase dashboard:
    - `public.friendships` UPDATE -> Edge Function `notify_on_friendship` (notify inviter when status becomes `accepted`)
    - `public.friendships` DELETE -> Edge Function `notify_on_friendship` (notify inviter when a **pending** row is removed, e.g. recipient declined)
    - `public.friend_invites` INSERT -> Edge Function `friend_invite_link`
+   - `public.welcome_emails` INSERT -> Edge Function `welcome_email`
 2. **Scheduled Functions** (`select cron.schedule(...)` or dashboard)
    - `recurring_runner` daily at 02:00 UTC
    - `fx_refresh` daily at 04:00 UTC
 3. **Function secrets**
    - `APNS_TEAM_ID`, `APNS_KEY_ID`, `APNS_PRIVATE_KEY`, `APNS_BUNDLE_ID`, `APNS_USE_SANDBOX`
-   - `RESEND_API_KEY`, `RESEND_FROM`
+   - `RESEND_API_KEY`, `RESEND_FROM` (optional; defaults to `PandaSplit <invites@mail.khushlani.store>`)
    - `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_FROM`
    - `APP_URL`
    - `FX_PROVIDER_URL` (optional override)
+
+The welcome email flow is enqueued automatically from the `auth.users` insert
+trigger, so no client-side changes are required. It only runs for newly created
+accounts and is safe to retry because `public.welcome_emails.user_id` is unique.
 
 ## Schema overview
 

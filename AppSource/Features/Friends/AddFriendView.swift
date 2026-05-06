@@ -11,6 +11,7 @@ struct AddFriendView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var photoPickerItem: PhotosPickerItem?
     @State private var avatarPreviewData: Data?
+    @State private var successToastMessage: String?
 
     var body: some View {
         ZStack {
@@ -91,7 +92,13 @@ struct AddFriendView: View {
                 VStack(spacing: 0) {
                     PrimaryButton(title: vm.isSubmitting ? "Sending…" : "Send Invite") {
                         Task {
-                            if await vm.submit() { dismiss() }
+                            if await vm.submit() {
+                                withAnimation {
+                                    successToastMessage = "Invite sent successfully"
+                                }
+                                try? await Task.sleep(for: .seconds(1.3))
+                                dismiss()
+                            }
                         }
                     }
                     .disabled(!vm.canSubmit)
@@ -113,6 +120,15 @@ struct AddFriendView: View {
                 }
             }
         }
+        .overlay(alignment: .top) {
+            if let successToastMessage {
+                successToast(message: successToastMessage)
+                    .padding(.top, 14)
+                    .padding(.horizontal, 20)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.spring(response: 0.32, dampingFraction: 0.9), value: successToastMessage != nil)
         .keyboardDismissToolbar()
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
@@ -140,5 +156,32 @@ struct AddFriendView: View {
 
             Color.clear.frame(width: 40, height: 40)
         }
+    }
+
+    private func successToast(message: String) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "checkmark.circle.fill")
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(AppColor.positive)
+
+            Text(message)
+                .font(AppFont.caption)
+                .foregroundStyle(AppColor.textPrimary)
+                .lineLimit(2)
+                .multilineTextAlignment(.leading)
+
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .background(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.10), radius: 18, x: 0, y: 8)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 18, style: .continuous)
+                .stroke(AppColor.cardHairline, lineWidth: 1)
+        )
     }
 }
