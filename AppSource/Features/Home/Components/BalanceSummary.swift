@@ -17,7 +17,7 @@ struct BalanceSummary: View {
     var body: some View {
         HStack(alignment: .top, spacing: 0) {
             column(
-                label: "You owe",
+                label: "To pay",
                 amount: youOwe.currencyString(code: currencyCode),
                 subtitle: "across \(owedGroups) groups"
             )
@@ -27,7 +27,7 @@ struct BalanceSummary: View {
                 .overlay(Color.white.opacity(0.25))
 
             column(
-                label: "You are owed",
+                label: "To receive",
                 amount: youAreOwed.currencyString(code: currencyCode),
                 subtitle: "from \(owedFrom) friends"
             )

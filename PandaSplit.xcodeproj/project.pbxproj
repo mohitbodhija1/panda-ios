@@ -278,7 +278,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "bodhija.PandaSplit---Bill-Splitter---Group-Expense-Tracker";
 				PRODUCT_NAME = "PandaSplit – Split Bills";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -314,7 +314,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.2;
+				MARKETING_VERSION = 1.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = "bodhija.PandaSplit---Bill-Splitter---Group-Expense-Tracker";
 				PRODUCT_NAME = "PandaSplit – Split Bills";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
